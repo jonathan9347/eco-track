@@ -96,7 +96,7 @@
 
         <div x-show="tab === 'factors'" class="border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:shadow-none" style="border-radius: 0.35rem !important;">
             <h2 class="text-2xl font-black text-zinc-900 dark:text-zinc-100">Factor Management</h2>
-            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Edit transport, diet, and gadget factors, then save them to Firebase.</p>
+            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Edit transport, diet, and gadget fallback factors, then save them to Firebase. API values below are cached snapshots used when external services are reachable.</p>
             <div class="mt-6 grid gap-6 xl:grid-cols-3">
                 <div class="bg-emerald-50 p-5 ring-1 ring-emerald-100 dark:bg-emerald-950/20 dark:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
                     <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">Transport</h3>
@@ -106,10 +106,15 @@
                                 <span>{{ ucfirst($key) }}</span>
                                 <input wire:model="factorForm.transport.{{ $key }}" type="number" step="0.01" min="0" class="border border-zinc-200 px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:shadow-none dark:focus:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
                             </label>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                                API: {{ number_format((float) data_get($apiFactorStatus, "transport.$key.value", 0), 2) }} kg CO2/km
+                                | Source: {{ ucfirst((string) data_get($apiFactorStatus, "transport.$key.source", 'fallback')) }}
+                                | Last synced: {{ data_get($apiFactorStatus, "transport.$key.last_synced_at", 'Not synced yet') }}
+                            </p>
                         @endforeach
                     </div>
                 </div>
-                <div class="rounded-[1.5rem] bg-emerald-50 p-5 ring-1 ring-emerald-100 dark:bg-emerald-950/20 dark:ring-emerald-900/40">
+                <div class="bg-emerald-50 p-5 ring-1 ring-emerald-100 dark:bg-emerald-950/20 dark:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
                     <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">Diet</h3>
                     <div class="mt-4 grid gap-3">
                         @foreach (['meat', 'average', 'vegetarian', 'vegan'] as $key)
@@ -117,15 +122,25 @@
                                 <span>{{ ucfirst($key) }}</span>
                                 <input wire:model="factorForm.diet.{{ $key }}" type="number" step="0.01" min="0" class="border border-zinc-200 px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:shadow-none dark:focus:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
                             </label>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400">
+                                API: {{ number_format((float) data_get($apiFactorStatus, "diet.$key.value", 0), 2) }} kg CO2/day
+                                | Source: {{ ucfirst((string) data_get($apiFactorStatus, "diet.$key.source", 'fallback')) }}
+                                | Last synced: {{ data_get($apiFactorStatus, "diet.$key.last_synced_at", 'Not synced yet') }}
+                            </p>
                         @endforeach
                     </div>
                 </div>
-                <div class="rounded-[1.5rem] bg-emerald-50 p-5 ring-1 ring-emerald-100 dark:bg-emerald-950/20 dark:ring-emerald-900/40">
+                <div class="bg-emerald-50 p-5 ring-1 ring-emerald-100 dark:bg-emerald-950/20 dark:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
                     <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">Gadgets</h3>
                     <label class="mt-4 grid gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                         <span>Per Hour</span>
                         <input wire:model="factorForm.gadgets.per_hour" type="number" step="0.01" min="0" class="border border-zinc-200 px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:shadow-none dark:focus:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
                     </label>
+                    <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+                        API electricity factor: {{ number_format((float) data_get($apiFactorStatus, 'gadgets.electricity.value', 0), 4) }} kg CO2/kWh
+                        | Source: {{ ucfirst((string) data_get($apiFactorStatus, 'gadgets.electricity.source', 'fallback')) }}
+                        | Last synced: {{ data_get($apiFactorStatus, 'gadgets.electricity.last_synced_at', 'Not synced yet') }}
+                    </p>
                 </div>
             </div>
             <button wire:click="saveFactors" class="mt-6 bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700" style="border-radius: 0.35rem !important;">Save to Firebase</button>

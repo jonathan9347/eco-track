@@ -3,7 +3,6 @@
 use App\Livewire\AdminPanel;
 use App\Livewire\BadgesAndChallenges;
 use App\Livewire\CarbonHistory;
-use App\Livewire\Leaderboard;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use Kreait\Firebase\Contract\Firestore;
@@ -24,10 +23,6 @@ Route::middleware('auth')
 
 Route::get('/carbon-history', CarbonHistory::class)
     ->name('carbon.history')
-    ->middleware('auth');
-
-Route::get('/leaderboard', Leaderboard::class)
-    ->name('leaderboard')
     ->middleware('auth');
 
 Route::get('/achievements', BadgesAndChallenges::class)
@@ -51,6 +46,18 @@ Route::middleware('auth')
         return view('eco-tips');
     })
     ->name('eco.tips');
+
+Route::middleware('auth')
+    ->get('/about-us', function () {
+        return view('about-us');
+    })
+    ->name('about.us');
+
+Route::middleware('auth')
+    ->get('/contact-us', function () {
+        return view('contact-us');
+    })
+    ->name('contact.us');
 
 Route::middleware('auth')->group(function () {
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');

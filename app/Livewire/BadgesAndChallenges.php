@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Kreait\Firebase\Contract\Firestore;
@@ -11,42 +12,8 @@ class BadgesAndChallenges extends Component
 {
     public array $badges = [];
 
-    public ?array $activeChallenge = null;
-
-    public array $challengeLeaderboard = [];
-
-    public int $userPoints = 0;
-
-    public ?string $challengeMessage = null;
-
     public function mount(): void
     {
-        $this->refreshData();
-    }
-
-    public function completeChallenge(): void
-    {
-        if (! auth()->check() || ! $this->activeChallenge || ($this->activeChallenge['completed'] ?? false)) {
-            return;
-        }
-
-        $challengeId = $this->activeChallenge['id'];
-        $database = app(Firestore::class)->database();
-        $user = auth()->user();
-
-        $database
-            ->collection('challenge_completions')
-            ->document($challengeId.'_'.$user->id)
-            ->set([
-                'challenge_id' => $challengeId,
-                'user_id' => $user->id,
-                'user_name' => $user->name,
-                'classroom' => $user->classroom,
-                'points' => 100,
-                'completed_at' => now()->toISOString(),
-            ]);
-
-        $this->challengeMessage = 'Challenge completed! You earned 100 points.';
         $this->refreshData();
     }
 
@@ -54,9 +21,6 @@ class BadgesAndChallenges extends Component
     {
         if (! auth()->check()) {
             $this->badges = [];
-            $this->activeChallenge = null;
-            $this->challengeLeaderboard = [];
-            $this->userPoints = 0;
 
             return;
         }
@@ -66,24 +30,18 @@ class BadgesAndChallenges extends Component
         $logs = $this->fetchUserLogs($database, $user->id);
 
         $this->badges = $this->buildBadges($logs);
-        $this->activeChallenge = $this->buildActiveChallenge($database, $logs, $user->id);
-
-        [$leaderboard, $points] = $this->buildChallengeLeaderboard($database, $user->id);
-
-        $this->challengeLeaderboard = $leaderboard;
-        $this->userPoints = $points;
     }
 
     public function render(): View
     {
-        return view('components.badges-and-challenges');
+        return view('components.badges-and-challenges')
+            ->layout('layouts.app', ['title' => 'Achievements']);
     }
 
     protected function fetchUserLogs($database, int $userId): Collection
     {
         $documents = $database
             ->collection('carbon_logs')
-            ->where('user_id', '=', $userId)
             ->documents();
 
         $logs = [];
@@ -93,204 +51,103 @@ class BadgesAndChallenges extends Component
                 continue;
             }
 
+            $data = $document->data();
+
+            if ((string) ($data['user_id'] ?? '') !== (string) $userId) {
+                continue;
+            }
+
+            $createdAt = $this->normalizeCreatedAt($data['created_at'] ?? null);
+
             $logs[] = [
                 'id' => $document->id(),
-                ...$document->data(),
+                ...$data,
+                'transport_type' => $this->normalizeTransportType($data['transport_type'] ?? null),
+                'gadget_hours' => $this->normalizeNumber(
+                    $data['gadget_hours']
+                        ?? $data['gadget_usage']
+                        ?? $data['device_hours']
+                        ?? 0
+                ),
+                'total_emission' => $this->normalizeNumber($data['total_emission'] ?? 0),
+                'created_at' => $createdAt,
+                'log_date' => $createdAt?->format('Y-m-d'),
             ];
         }
 
         return collect($logs)
-            ->map(function (array $log): array {
-                $log['distance'] = (float) ($log['distance'] ?? 0);
-                $log['gadget_hours'] = (float) ($log['gadget_hours'] ?? 0);
-                $log['total_emission'] = (float) ($log['total_emission'] ?? 0);
-                $log['created_at'] = $log['created_at'] ?? null;
-
-                return $log;
-            })
-            ->sortBy('created_at')
+            ->sortBy(fn (array $log) => $log['created_at']?->timestamp ?? 0)
             ->values();
     }
 
     protected function buildBadges(Collection $logs): array
     {
+        $logDates = $this->extractUniqueLogDates($logs);
+
         $walkingDays = $logs
             ->where('transport_type', 'walking')
-            ->pluck('created_at')
+            ->pluck('log_date')
             ->filter()
-            ->map(fn ($date) => substr((string) $date, 0, 10))
             ->unique()
             ->count();
-
-        $veganMeals = $logs->where('diet_type', 'vegan')->count();
 
         $energySaverDays = $logs
             ->filter(fn (array $log) => $log['gadget_hours'] < 2)
-            ->pluck('created_at')
+            ->pluck('log_date')
             ->filter()
-            ->map(fn ($date) => substr((string) $date, 0, 10))
             ->unique()
             ->count();
 
-        $greenSavings = $logs->reduce(function (float $carry, array $log): float {
-            // Assumes 5 kg CO2 as a simple daily baseline to estimate savings.
-            return $carry + max(0, 5 - $log['total_emission']);
-        }, 0);
-
-        $streak = $this->calculateLongestStreak(
-            $logs->pluck('created_at')
-                ->filter()
-                ->map(fn ($date) => substr((string) $date, 0, 10))
-                ->unique()
-                ->values()
-                ->all()
-        );
+        $totalLogs = $logs->count();
+        $streak = $this->calculateLongestStreak($logDates);
 
         return [
-            $this->makeBadge('Walking Hero', 'Walk 5 days', $walkingDays, 5),
-            $this->makeBadge('Vegan Champion', 'Log 10 vegan meals', $veganMeals, 10),
-            $this->makeBadge('Energy Saver', 'Stay below 2 gadget hours for 7 days', $energySaverDays, 7),
-            $this->makeBadge('Green Warrior', 'Save 100 total CO2', $greenSavings, 100, 'kg saved'),
-            $this->makeBadge('Streak Master', 'Log 30 consecutive days', $streak, 30),
-        ];
-    }
-
-    protected function buildActiveChallenge($database, Collection $logs, int $userId): ?array
-    {
-        $documents = $database
-            ->collection('weekly_challenges')
-            ->where('is_active', '=', true)
-            ->documents();
-
-        $activeChallenge = null;
-
-        foreach ($documents as $document) {
-            if (! $document->exists()) {
-                continue;
-            }
-
-            $activeChallenge = [
-                'id' => $document->id(),
-                ...$document->data(),
-            ];
-            break;
-        }
-
-        if (! $activeChallenge) {
-            return [
-                'id' => null,
-                'title' => 'No active weekly challenge yet',
-                'description' => 'Add a document in the weekly_challenges collection with is_active = true to launch one.',
-                'target' => 1,
-                'progress' => 0,
-                'percentage' => 0,
-                'points' => 100,
-                'completed' => false,
-            ];
-        }
-
-        $target = (float) ($activeChallenge['target'] ?? $activeChallenge['target_value'] ?? 1);
-        $metric = (string) ($activeChallenge['metric'] ?? 'log_days');
-        $progress = $this->challengeProgress($metric, $activeChallenge, $logs);
-        $percentage = $target > 0 ? min(100, (int) round(($progress / $target) * 100)) : 0;
-
-        $completion = $database
-            ->collection('challenge_completions')
-            ->document($activeChallenge['id'].'_'.$userId)
-            ->snapshot();
-
-        return [
-            'id' => $activeChallenge['id'],
-            'title' => $activeChallenge['title'] ?? 'Weekly Challenge',
-            'description' => $activeChallenge['description'] ?? 'Complete this week\'s sustainability goal.',
-            'target' => $target,
-            'progress' => $progress,
-            'percentage' => $percentage,
-            'points' => 100,
-            'completed' => $completion->exists(),
-        ];
-    }
-
-    protected function buildChallengeLeaderboard($database, int $userId): array
-    {
-        $documents = $database
-            ->collection('challenge_completions')
-            ->documents();
-
-        $scores = [];
-
-        foreach ($documents as $document) {
-            if (! $document->exists()) {
-                continue;
-            }
-
-            $data = $document->data();
-            $key = (string) ($data['user_id'] ?? 'unknown');
-
-            if (! isset($scores[$key])) {
-                $scores[$key] = [
-                    'user_id' => $data['user_id'] ?? null,
-                    'user_name' => $data['user_name'] ?? 'Unknown student',
-                    'classroom' => $data['classroom'] ?? 'Unassigned',
-                    'points' => 0,
-                    'completed_challenges' => 0,
-                ];
-            }
-
-            $scores[$key]['points'] += (int) ($data['points'] ?? 0);
-            $scores[$key]['completed_challenges']++;
-        }
-
-        $leaderboard = collect($scores)
-            ->sortByDesc('points')
-            ->values()
-            ->map(function (array $entry, int $index): array {
-                $entry['rank'] = $index + 1;
-
-                return $entry;
-            })
-            ->all();
-
-        $currentUserPoints = collect($leaderboard)
-            ->firstWhere('user_id', $userId)['points'] ?? 0;
-
-        return [$leaderboard, $currentUserPoints];
-    }
-
-    protected function challengeProgress(string $metric, array $challenge, Collection $logs): float|int
-    {
-        return match ($metric) {
-            'walking_days' => $logs
-                ->where('transport_type', 'walking')
-                ->pluck('created_at')
-                ->filter()
-                ->map(fn ($date) => substr((string) $date, 0, 10))
-                ->unique()
-                ->count(),
-            'vegan_meals' => $logs->where('diet_type', 'vegan')->count(),
-            'energy_saver_days' => $logs
-                ->filter(fn (array $log) => $log['gadget_hours'] < ((float) ($challenge['max_gadget_hours'] ?? 2)))
-                ->pluck('created_at')
-                ->filter()
-                ->map(fn ($date) => substr((string) $date, 0, 10))
-                ->unique()
-                ->count(),
-            'co2_saved' => $logs->reduce(fn (float $carry, array $log): float => $carry + max(0, 5 - $log['total_emission']), 0),
-            'streak_days' => $this->calculateLongestStreak(
-                $logs->pluck('created_at')
-                    ->filter()
-                    ->map(fn ($date) => substr((string) $date, 0, 10))
-                    ->unique()
-                    ->values()
-                    ->all()
+            $this->makeBadge(
+                'Walking Hero',
+                'Walk 5 different days to unlock this badge.',
+                $walkingDays,
+                5,
+                'days',
+                'Walk instead of using a vehicle on five separate days, then save each carbon log so the system can count your progress.',
+                'M7 14c2.2 0 4-1.8 4-4S9.2 6 7 6 3 7.8 3 10s1.8 4 4 4Zm10 1c1.66 0 3 1.34 3 3v2h-2v-2a1 1 0 0 0-2 0v2h-2v-2c0-1.66 1.34-3 3-3ZM9 19l1.4-5.2 2.4 1.8V22h-2v-4.5L9.6 16 8 22H6l2.1-7.6A2 2 0 0 1 10 13h1.2l2.3 1.7'
             ),
-            default => $logs
-                ->pluck('created_at')
-                ->filter()
-                ->map(fn ($date) => substr((string) $date, 0, 10))
-                ->unique()
-                ->count(),
-        };
+            $this->makeBadge(
+                'Energy Saver',
+                'Keep gadget use below 2 hours for 7 days.',
+                $energySaverDays,
+                7,
+                'days',
+                'Log seven days where your gadget use stays under two hours. Shorter screen time entries will push this badge forward.',
+                'M12 2 4 14h6l-1 8 8-12h-6l1-8Z'
+            ),
+            $this->makeBadge(
+                'Carbon Tracker',
+                'Record 20 carbon logs in total.',
+                $totalLogs,
+                20,
+                'logs',
+                'Keep adding your daily transport, diet, and gadget entries until you reach twenty saved carbon logs.',
+                'M7 3h8l5 5v13a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5M9 13h6M9 17h6'
+            ),
+            $this->makeBadge(
+                'Streak Master',
+                'Log 30 consecutive days without missing a day.',
+                $streak,
+                30,
+                'days',
+                'Submit at least one carbon log every day for thirty straight days. Missing a day resets the streak count.',
+                'M12 3 4 7v6c0 4.42 3.58 8 8 8s8-3.58 8-8V7l-8-4Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z'
+            ),
+        ];
+    }
+
+    protected function extractUniqueLogDates(Collection $logs): array
+    {
+        return $logs->pluck('log_date')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
     }
 
     protected function makeBadge(
@@ -298,7 +155,9 @@ class BadgesAndChallenges extends Component
         string $description,
         float|int $progress,
         float|int $target,
-        string $suffix = 'days'
+        string $suffix = 'days',
+        string $instruction = '',
+        string $iconPath = ''
     ): array {
         $progress = round((float) $progress, 2);
         $target = round((float) $target, 2);
@@ -312,6 +171,8 @@ class BadgesAndChallenges extends Component
             'percentage' => $percentage,
             'earned' => $progress >= $target,
             'suffix' => $suffix,
+            'instruction' => $instruction,
+            'icon_path' => $iconPath,
         ];
     }
 
@@ -340,5 +201,41 @@ class BadgesAndChallenges extends Component
         }
 
         return $longest;
+    }
+
+    protected function normalizeCreatedAt(mixed $value): ?Carbon
+    {
+        if ($value instanceof Carbon) {
+            return $value;
+        }
+
+        if ($value instanceof \DateTimeInterface) {
+            return Carbon::instance($value);
+        }
+
+        if (is_string($value) && trim($value) !== '') {
+            try {
+                return Carbon::parse($value);
+            } catch (\Throwable) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    protected function normalizeTransportType(mixed $value): string
+    {
+        $transport = strtolower(trim((string) $value));
+
+        return match ($transport) {
+            'walk', 'walking', 'on foot' => 'walking',
+            default => $transport,
+        };
+    }
+
+    protected function normalizeNumber(mixed $value): float
+    {
+        return is_numeric($value) ? (float) $value : 0.0;
     }
 }

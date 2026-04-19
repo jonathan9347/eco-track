@@ -33,8 +33,12 @@
             </article>
 
             <aside class="space-y-4">
-                <div class="flex min-h-[220px] items-center justify-center rounded-[1.2rem] border border-dashed border-zinc-300 bg-zinc-50 p-6 text-center text-sm text-zinc-400">
-                    Placeholder climate image
+                <div class="overflow-hidden rounded-[1.2rem] border border-zinc-200 bg-white shadow-sm">
+                    <img
+                        src="{{ asset('assets/climate.jpg') }}"
+                        alt="Climate change illustration"
+                        class="h-[220px] w-full object-cover"
+                    >
                 </div>
 
                 <article class="rounded-[1.2rem] border border-zinc-200 bg-white p-5 shadow-sm">
@@ -90,8 +94,12 @@
             </article>
 
             <div class="space-y-4">
-                <div class="flex min-h-[200px] items-center justify-center rounded-[1.2rem] border border-dashed border-zinc-300 bg-zinc-50 p-6 text-center text-sm text-zinc-400">
-                    Placeholder SDG 13 image
+                <div class="overflow-hidden rounded-[1.2rem] border border-zinc-200 bg-white shadow-sm">
+                    <img
+                        src="{{ asset('assets/sdg13.jpg') }}"
+                        alt="SDG 13 Climate Action"
+                        class="h-[200px] w-full object-cover"
+                    >
                 </div>
 
                 <article class="rounded-[1.2rem] border border-zinc-200 bg-white p-5 shadow-sm">

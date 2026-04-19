@@ -61,16 +61,6 @@
         ];
     }
 
-    if (Route::has('leaderboard')) {
-        $commands[] = [
-            'title' => 'Classroom Leaderboard',
-            'description' => 'See the latest rankings',
-            'group' => 'Navigation',
-            'href' => route('leaderboard'),
-            'keywords' => ['leaderboard', 'ranking', 'classroom'],
-        ];
-    }
-
     if (Route::has('achievements')) {
         $commands[] = [
             'title' => 'Achievements',
@@ -192,7 +182,7 @@
     <button
         type="button"
         @click="openPalette()"
-        class="flex items-center gap-2 rounded-md border border-zinc-300 bg-zinc-100 px-3 py-1.5 text-sm text-zinc-500 transition-colors hover:bg-zinc-200"
+        class="flex items-center gap-2 rounded-md border border-white/20 bg-white/14 px-3 py-1.5 text-sm text-white/88 shadow-sm backdrop-blur-sm transition-colors hover:bg-white/20"
         style="min-width: 280px;"
     >
         <svg class="mr-2 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -200,7 +190,7 @@
             <path d="m21 21-4.3-4.3"/>
         </svg>
         <span class="flex-1 text-left">Type a command or search...</span>
-        <kbd class="pointer-events-none inline-flex h-5 select-none items-center rounded border border-zinc-200 bg-zinc-50 px-1.5 font-mono text-[10px] font-medium text-zinc-500">
+        <kbd class="pointer-events-none inline-flex h-5 select-none items-center rounded border border-white/18 bg-white/14 px-1.5 font-mono text-[10px] font-medium text-white/72">
             <span>Cmd</span>
             <span>+</span>
             <span>K</span>

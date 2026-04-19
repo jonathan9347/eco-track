@@ -20,6 +20,43 @@
         .badge-unlock {
             animation: badge-pop 700ms ease-out both;
         }
+
+        .achievement-flip-card {
+            perspective: 1200px;
+        }
+
+        .achievement-flip-card summary {
+            list-style: none;
+        }
+
+        .achievement-flip-card summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .achievement-flip-card__inner {
+            position: relative;
+            height: 100%;
+            min-height: 22rem;
+            transform-style: preserve-3d;
+            transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .achievement-flip-card[open] .achievement-flip-card__inner {
+            transform: rotateY(180deg);
+        }
+
+        .achievement-flip-card__face {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .achievement-flip-card__back {
+            transform: rotateY(180deg);
+        }
     </style>
 
     <div class="space-y-8">
@@ -28,143 +65,71 @@
                 <p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-700">Badges</p>
                 <h2 class="mt-1 text-2xl font-black text-zinc-900 dark:text-zinc-100 sm:text-3xl">Unlock recognition for greener habits.</h2>
                 <p class="mt-1 max-w-2xl text-sm text-zinc-600 dark:text-zinc-400">
-                    Earn badges by walking more, choosing vegan meals, saving gadget energy, cutting emissions, and staying consistent.
+                    Earn badges from the activity in your carbon logs by walking more, keeping gadget use low, logging consistently, and building a stronger tracking streak.
                 </p>
             </div>
 
             <div class="grid gap-6 px-6 py-8 sm:px-8 lg:grid-cols-2 xl:grid-cols-3">
                 @foreach ($badges as $badge)
-                    <article
-                        class="{{ $badge['earned'] ? 'badge-unlock border-emerald-300 bg-emerald-50 shadow-lg shadow-emerald-100/70 dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:shadow-none' : 'border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950' }} border p-6 transition"
-                        style="border-radius: 0.35rem !important;"
-                    >
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <p class="text-xs font-semibold uppercase tracking-[0.24em] {{ $badge['earned'] ? 'text-emerald-700' : 'text-zinc-500' }}">
-                                    {{ $badge['earned'] ? 'Earned' : 'In Progress' }}
-                                </p>
-                                <h3 class="mt-2 text-2xl font-black text-zinc-900 dark:text-zinc-100">{{ $badge['title'] }}</h3>
-                                <p class="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">{{ $badge['description'] }}</p>
+                    <details class="achievement-flip-card {{ $badge['earned'] ? 'badge-unlock' : '' }}">
+                        <summary class="cursor-pointer focus:outline-none">
+                            <div class="achievement-flip-card__inner">
+                            <div
+                                class="achievement-flip-card__face border border-emerald-200 bg-[#dff5df] p-6 dark:border-emerald-900/40 dark:bg-[#214232]"
+                                style="border-radius: 0.35rem !important;"
+                            >
+                                <div class="flex items-start justify-between gap-4">
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.24em] {{ $badge['earned'] ? 'text-emerald-700 dark:text-emerald-300' : 'text-emerald-600/80 dark:text-emerald-200/80' }}">
+                                            {{ $badge['earned'] ? 'Earned' : 'In Progress' }}
+                                        </p>
+                                        <h3 class="mt-2 text-2xl font-black text-emerald-950 dark:text-zinc-100">{{ $badge['title'] }}</h3>
+                                        <p class="mt-2 text-sm leading-6 text-emerald-900/75 dark:text-emerald-100/80">{{ $badge['description'] }}</p>
+                                    </div>
+
+                                    <div class="flex h-14 w-14 items-center justify-center bg-white/75 text-emerald-700 ring-1 ring-emerald-200 backdrop-blur-sm dark:bg-emerald-900/45 dark:text-emerald-100 dark:ring-emerald-700/50" style="border-radius: 0.35rem !important;">
+                                        <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="{{ $badge['icon_path'] }}"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div class="mt-auto pt-8">
+                                    <div class="mb-2 flex items-center justify-between text-sm">
+                                        <span class="font-medium text-emerald-900/80 dark:text-emerald-100/80">{{ $badge['progress'] }} / {{ $badge['target'] }} {{ $badge['suffix'] }}</span>
+                                        <span class="font-semibold {{ $badge['earned'] ? 'text-emerald-700 dark:text-emerald-300' : 'text-emerald-700/80 dark:text-emerald-200/80' }}">{{ $badge['percentage'] }}%</span>
+                                    </div>
+                                    <div class="h-3 bg-white/70 ring-1 ring-emerald-100 dark:bg-emerald-950/50 dark:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
+                                        <div
+                                            class="h-3 {{ $badge['earned'] ? 'bg-emerald-500' : 'bg-emerald-400' }}"
+                                            style="border-radius: 0.35rem !important; width: {{ $badge['percentage'] }}%;"
+                                        ></div>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="flex h-14 w-14 items-center justify-center {{ $badge['earned'] ? 'bg-emerald-600 text-white dark:bg-emerald-500' : 'bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-300' }} text-2xl" style="border-radius: 0.35rem !important;">
-                                {{ $badge['earned'] ? '★' : '☆' }}
-                            </div>
-                        </div>
+                            <div
+                                class="achievement-flip-card__face achievement-flip-card__back border border-teal-200 bg-[#d8f3ec] p-6 dark:border-teal-900/40 dark:bg-[#1d3b3d]"
+                                style="border-radius: 0.35rem !important;"
+                            >
+                                <div class="flex h-full flex-col justify-between">
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-700 dark:text-emerald-300">How To Earn</p>
+                                        <h3 class="mt-2 text-2xl font-black text-emerald-950 dark:text-zinc-100">{{ $badge['title'] }}</h3>
+                                        <p class="mt-4 text-sm leading-7 text-emerald-950/80 dark:text-emerald-100/85">{{ $badge['instruction'] }}</p>
+                                    </div>
 
-                        <div class="mt-6">
-                            <div class="mb-2 flex items-center justify-between text-sm">
-                                <span class="font-medium text-zinc-700 dark:text-zinc-300">{{ $badge['progress'] }} / {{ $badge['target'] }} {{ $badge['suffix'] }}</span>
-                                <span class="font-semibold {{ $badge['earned'] ? 'text-emerald-700' : 'text-zinc-500' }}">{{ $badge['percentage'] }}%</span>
+                                    <div class="mt-8 rounded-[0.35rem] bg-white/65 px-4 py-3 text-sm text-emerald-900/80 ring-1 ring-emerald-100 dark:bg-emerald-950/35 dark:text-emerald-100/80 dark:ring-emerald-900/40">
+                                        Target: {{ $badge['target'] }} {{ $badge['suffix'] }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="h-3 bg-zinc-100 dark:bg-zinc-800" style="border-radius: 0.35rem !important;">
-                                <div
-                                    class="h-3 {{ $badge['earned'] ? 'bg-emerald-500' : 'bg-lime-500' }}"
-                                    style="border-radius: 0.35rem !important; width: {{ $badge['percentage'] }}%;"
-                                ></div>
                             </div>
-                        </div>
-                    </article>
+                        </summary>
+                    </details>
                 @endforeach
             </div>
         </div>
 
-        <div class="grid gap-8 xl:grid-cols-[0.98fr_1.02fr]">
-            <section class="overflow-hidden border border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950" style="border-radius: 0.35rem !important;">
-                <div class="px-8 py-6 sm:px-10">
-                    <p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-700">Challenges</p>
-                    <h2 class="mt-1 text-2xl font-black text-zinc-900 dark:text-zinc-100 sm:text-3xl">{{ $activeChallenge['title'] ?? 'Weekly Challenge' }}</h2>
-                    <p class="mt-1 max-w-2xl text-sm text-zinc-600 dark:text-zinc-400">
-                        {{ $activeChallenge['description'] ?? 'Take on a new challenge each week and earn points for your classroom.' }}
-                    </p>
-                </div>
-
-                <div class="space-y-6 px-10 py-10 sm:px-12">
-                    @if ($challengeMessage)
-                        <div class="border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700" style="border-radius: 0.35rem !important;">
-                            {{ $challengeMessage }}
-                        </div>
-                    @endif
-
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <div class="bg-emerald-50 px-5 py-4 ring-1 ring-emerald-100 dark:bg-emerald-950/20 dark:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
-                            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-700">Progress</p>
-                            <p class="mt-2 text-3xl font-black text-zinc-900 dark:text-zinc-100">
-                                {{ $activeChallenge['progress'] ?? 0 }} / {{ $activeChallenge['target'] ?? 0 }}
-                            </p>
-                        </div>
-                            <div class="bg-emerald-50 px-5 py-4 ring-1 ring-emerald-100 dark:bg-emerald-950/20 dark:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
-                            <p class="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-700">Points</p>
-                            <p class="mt-2 text-3xl font-black text-zinc-900 dark:text-zinc-100">{{ $activeChallenge['points'] ?? 100 }}</p>
-                            <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">Your total: {{ $userPoints }} points</p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="mb-2 flex items-center justify-between text-sm">
-                            <span class="font-medium text-zinc-700 dark:text-zinc-300">Challenge completion</span>
-                            <span class="font-semibold text-emerald-700">{{ $activeChallenge['percentage'] ?? 0 }}%</span>
-                        </div>
-                        <div class="h-3 bg-zinc-100 dark:bg-zinc-800" style="border-radius: 0.35rem !important;">
-                            <div
-                                class="h-3 bg-emerald-500 transition-all duration-700"
-                                style="border-radius: 0.35rem !important; width: {{ $activeChallenge['percentage'] ?? 0 }}%;"
-                            ></div>
-                        </div>
-                    </div>
-
-                    <button
-                        wire:click="completeChallenge"
-                        class="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold transition {{ ($activeChallenge['completed'] ?? false) ? 'cursor-not-allowed bg-zinc-200 text-zinc-500' : 'bg-emerald-600 text-white hover:bg-emerald-700' }}"
-                        style="border-radius: 0.35rem !important;"
-                        @disabled($activeChallenge['completed'] ?? false)
-                    >
-                        {{ ($activeChallenge['completed'] ?? false) ? 'Completed' : 'Complete' }}
-                    </button>
-                </div>
-            </section>
-
-            <section class="overflow-hidden border border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950" style="border-radius: 0.35rem !important;">
-                <div class="px-8 py-6 sm:px-10">
-                    <p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-700">Challenge Points Leaderboard</p>
-                    <h2 class="mt-1 text-2xl font-black text-zinc-900 dark:text-zinc-100 sm:text-3xl">Top students by challenge points</h2>
-                </div>
-
-                <div class="space-y-4 px-10 py-10 sm:px-12">
-                    @forelse ($challengeLeaderboard as $entry)
-                        <article class="border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none" style="border-radius: 0.35rem !important;">
-                            <div class="flex items-center justify-between gap-4">
-                                <div class="flex items-center gap-4">
-                                    <div class="flex h-12 w-12 items-center justify-center bg-emerald-50 text-xl ring-1 ring-emerald-100 dark:bg-emerald-950/30 dark:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
-                                        @if ($entry['rank'] === 1)
-                                            🥇
-                                        @elseif ($entry['rank'] === 2)
-                                            🥈
-                                        @elseif ($entry['rank'] === 3)
-                                            🥉
-                                        @else
-                                            {{ $entry['rank'] }}
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">{{ $entry['user_name'] }}</h3>
-                                        <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ $entry['classroom'] }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="text-right">
-                                    <p class="text-2xl font-black text-emerald-700">{{ $entry['points'] }}</p>
-                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ $entry['completed_challenges'] }} completed</p>
-                                </div>
-                            </div>
-                        </article>
-                    @empty
-                        <div class="border border-dashed border-zinc-200 bg-zinc-50 px-6 py-10 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400" style="border-radius: 0.35rem !important;">
-                            No challenge completions yet. Complete the weekly challenge to start the leaderboard.
-                        </div>
-                    @endforelse
-                </div>
-            </section>
-        </div>
     </div>
 </section>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Eco-Track - Track Your Carbon Footprint</title>
+    <title>Eco-Track: Track Your Carbon Footprint</title>
     <meta
         name="description"
         content="Eco-Track helps students in the Philippines measure daily habits, compete with classmates, and build greener routines."
@@ -96,6 +96,49 @@
             opacity: 0;
             transform: translateY(10px);
         }
+
+        [data-reveal] {
+            opacity: 0;
+            transform: translate3d(0, 42px, 0) scale(0.985);
+            transition:
+                opacity 720ms cubic-bezier(0.22, 1, 0.36, 1),
+                transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
+            transition-delay: var(--reveal-delay, 0ms);
+            will-change: opacity, transform;
+        }
+
+        [data-reveal="left"] {
+            transform: translate3d(-48px, 0, 0) scale(0.985);
+        }
+
+        [data-reveal="right"] {
+            transform: translate3d(48px, 0, 0) scale(0.985);
+        }
+
+        [data-reveal="zoom"] {
+            transform: translate3d(0, 30px, 0) scale(0.94);
+        }
+
+        [data-reveal="down"] {
+            transform: translate3d(0, -36px, 0) scale(0.985);
+        }
+
+        [data-reveal].is-visible {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            [data-reveal] {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen text-white antialiased">
@@ -152,7 +195,7 @@
         <div class="absolute inset-x-0 top-0 h-32 bg-[linear-gradient(to_bottom,_rgba(167,243,208,0.18),_transparent)]"></div>
 
         <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
-            <header class="flex items-center justify-between py-6">
+            <header class="flex items-center justify-between py-6" data-reveal="down">
                 <a href="{{ url('/') }}" class="flex items-center gap-3">
                     <img src="{{ asset('assets/logo.png') }}" alt="Eco-Track Logo" class="h-11 w-11 rounded-2xl ring-1 ring-white/15">
                     <div>
@@ -171,7 +214,7 @@
 
             <main>
                 <section class="grid items-center gap-16 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
-                    <div class="max-w-2xl">
+                    <div class="max-w-2xl" data-reveal="left">
                         <span class="inline-flex items-center rounded-full border border-emerald-200/20 bg-emerald-300/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.32em] text-emerald-100">
                             Climate action for every student
                         </span>
@@ -181,7 +224,7 @@
                             <span
                                 class="hero-type-shell"
                                 data-hero-typing
-                                data-hero-text="Eco-Track - Track Your Carbon Footprint"
+                                data-hero-text="Eco-Track: Track Your Carbon Footprint"
                             >
                                 <span class="hero-type-live">
                                     <span data-hero-typing-text></span>
@@ -212,7 +255,7 @@
                         </div>
                     </div>
 
-                    <div class="relative [perspective:1800px]">
+                    <div class="relative [perspective:1800px]" data-reveal="right" style="--reveal-delay: 120ms;">
                         <div class="absolute -left-6 top-10 h-24 w-24 rounded-full bg-lime-300/20 blur-3xl"></div>
                         <div class="absolute -right-4 bottom-8 h-32 w-32 rounded-full bg-amber-300/20 blur-3xl"></div>
                         <div class="absolute left-8 top-16 h-[28rem] w-[88%] rounded-[2.4rem] bg-black/30 blur-3xl"></div>
@@ -283,12 +326,12 @@
                     </div>
                 </section>
 
-                <section id="features" class="relative py-10 sm:py-14">
+                <section id="features" class="relative py-10 sm:py-14" data-reveal="up">
                     <div class="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 bg-white"></div>
 
                     <div class="relative px-8 py-10 text-zinc-900 sm:px-10 sm:py-14">
                         <div class="grid gap-10 lg:grid-cols-2 lg:items-stretch lg:gap-12">
-                            <div class="flex min-h-[36rem] flex-col justify-center p-2 sm:p-4 lg:pr-10 xl:pr-16">
+                            <div class="flex min-h-[36rem] flex-col justify-center p-2 sm:p-4 lg:pr-10 xl:pr-16" data-reveal="left">
                                 <div
                                     class="feature-copy-panel"
                                     data-feature-copy
@@ -306,7 +349,7 @@
                                 </div>
                             </div>
 
-                            <div class="flex min-h-[36rem] flex-col justify-between px-4 py-3 sm:px-8 sm:py-6">
+                            <div class="flex min-h-[36rem] flex-col justify-between px-4 py-3 sm:px-8 sm:py-6" data-reveal="right" style="--reveal-delay: 100ms;">
                                 <div
                                     class="relative flex-1 overflow-visible"
                                     data-feature-carousel
@@ -392,11 +435,11 @@
                     </div>
                 </section>
 
-                <section id="how-it-works" class="relative py-16 sm:py-20">
+                <section id="how-it-works" class="relative py-16 sm:py-20" data-reveal="up">
                     <div class="absolute inset-y-0 left-1/2 w-screen -translate-x-1/2 bg-white"></div>
 
                     <div class="relative px-8 py-10 text-zinc-900 sm:px-10 sm:py-14 xl:px-12">
-                        <div class="mx-auto max-w-3xl text-center">
+                        <div class="mx-auto max-w-3xl text-center" data-reveal="zoom">
                             <p class="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-700/80">How It Works</p>
                             <h2 class="mt-4 text-3xl font-black text-zinc-900 sm:text-4xl">Everything students need to log, learn, and lower their footprint.</h2>
                             <p class="mt-4 text-base leading-7 text-zinc-600">From signing in to comparing progress, Eco-Track makes it easy to turn everyday choices into better habits.</p>
@@ -404,7 +447,7 @@
 
                         <div class="mt-10 grid gap-6 md:grid-cols-2">
                             @foreach ($steps as $index => $step)
-                                <div class="p-7">
+                                <div class="p-7" data-reveal="up" style="--reveal-delay: {{ $index * 90 }}ms;">
                                     <div class="inline-flex h-12 w-12 items-center justify-center rounded-[0.35rem] bg-emerald-600 text-base font-black text-white shadow-sm">
                                         {{ $index + 1 }}
                                     </div>
@@ -416,10 +459,10 @@
                     </div>
                 </section>
 
-                <section id="stats" class="relative py-10 sm:py-14">
+                <section id="stats" class="relative py-10 sm:py-14" data-reveal="up">
                     <div class="mx-auto max-w-7xl px-6 lg:px-8">
                         <div class="flex flex-col gap-6">
-                            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between" data-reveal="up">
                                 <div class="max-w-2xl">
                                     <p class="text-sm font-semibold uppercase tracking-[0.32em] text-emerald-300/80">Community Impact</p>
                                     <h2 class="mt-4 text-3xl font-black text-white sm:text-4xl">Sample stats for now, ready to connect to live API data later.</h2>
@@ -434,7 +477,7 @@
 
                             <div class="mt-10 grid gap-6 md:grid-cols-3">
                                 @foreach ($stats as $stat)
-                                    <div class="group h-[30rem] [perspective:1000px]">
+                                    <div class="group h-[30rem] [perspective:1000px]" data-reveal="zoom" style="--reveal-delay: {{ $loop->index * 110 }}ms;">
                                         <div class="relative h-full w-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
                                             <!-- Front of card -->
                                             <div class="absolute inset-0 h-full w-full [backface-visibility:hidden]">
@@ -671,6 +714,33 @@
             track.setAttribute('tabindex', '0');
             goToSlide(0);
         });
+
+        const revealElements = document.querySelectorAll('[data-reveal]');
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (revealElements.length && ! reducedMotion) {
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry) => {
+                    if (! entry.isIntersecting) {
+                        return;
+                    }
+
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                });
+            }, {
+                threshold: 0.14,
+                rootMargin: '0px 0px -10% 0px',
+            });
+
+            revealElements.forEach((element) => {
+                revealObserver.observe(element);
+            });
+        } else {
+            revealElements.forEach((element) => {
+                element.classList.add('is-visible');
+            });
+        }
     </script>
 </body>
 </html>

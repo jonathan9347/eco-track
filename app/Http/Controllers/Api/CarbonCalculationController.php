@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\EmissionFactorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -13,6 +14,7 @@ class CarbonCalculationController extends Controller
 {
     public function __construct(
         protected Firestore $firestore,
+        protected EmissionFactorService $emissionFactorService,
     ) {
     }
 
@@ -45,6 +47,7 @@ class CarbonCalculationController extends Controller
             'distance' => (float) $validated['distance'],
             'diet_type' => $validated['diet_type'],
             'gadget_hours' => (float) $validated['gadget_hours'],
+            'gadget_type' => $validated['gadget_type'] ?? 'laptop',
             'transport_emission' => $calculation['breakdown']['transport'],
             'diet_emission' => $calculation['breakdown']['diet'],
             'gadget_emission' => $calculation['breakdown']['gadgets'],
@@ -209,29 +212,21 @@ class CarbonCalculationController extends Controller
             'distance' => ['required', 'numeric', 'min:0'],
             'diet_type' => ['required', 'string', 'in:meat,average,vegetarian,vegan'],
             'gadget_hours' => ['required', 'numeric', 'min:0'],
+            'gadget_type' => ['nullable', 'string', 'in:laptop,smartphone,tablet,desktop_pc,monitor'],
         ];
     }
 
     protected function buildCalculationResponse(array $validated): array
     {
-        $transportFactors = [
-            'jeepney' => 0.15,
-            'bus' => 0.12,
-            'tricycle' => 0.10,
-            'car' => 0.20,
-            'walking' => 0.00,
-        ];
+        $transportFactor = $this->emissionFactorService->getTransportFactor($validated['transport_type']);
+        $dietFactor = $this->emissionFactorService->getDietFactor($validated['diet_type']);
+        $electricityFactor = $this->emissionFactorService->getElectricityFactor();
+        $deviceType = $validated['gadget_type'] ?? 'laptop';
+        $deviceWattage = $this->emissionFactorService->getDeviceWattage($deviceType);
 
-        $dietFactors = [
-            'meat' => 5.0,
-            'average' => 3.5,
-            'vegetarian' => 2.0,
-            'vegan' => 1.5,
-        ];
-
-        $transportEmission = (float) $validated['distance'] * $transportFactors[$validated['transport_type']];
-        $dietEmission = $dietFactors[$validated['diet_type']];
-        $gadgetEmission = (float) $validated['gadget_hours'] * 0.05;
+        $transportEmission = (float) $validated['distance'] * $transportFactor;
+        $dietEmission = $dietFactor;
+        $gadgetEmission = (float) $validated['gadget_hours'] * $deviceWattage * $electricityFactor;
         $totalEmission = $transportEmission + $dietEmission + $gadgetEmission;
 
         return [
@@ -240,6 +235,11 @@ class CarbonCalculationController extends Controller
                 'transport' => round($transportEmission, 2),
                 'diet' => round($dietEmission, 2),
                 'gadgets' => round($gadgetEmission, 2),
+            ],
+            'meta' => [
+                'gadget_type' => $deviceType,
+                'device_wattage' => round($deviceWattage, 4),
+                'electricity_factor' => round($electricityFactor, 4),
             ],
         ];
     }
@@ -257,6 +257,7 @@ class CarbonCalculationController extends Controller
             'distance' => (float) ($data['distance'] ?? 0),
             'diet_type' => $data['diet_type'] ?? null,
             'gadget_hours' => (float) ($data['gadget_hours'] ?? 0),
+            'gadget_type' => $data['gadget_type'] ?? 'laptop',
             'transport_emission' => (float) ($data['transport_emission'] ?? 0),
             'diet_emission' => (float) ($data['diet_emission'] ?? 0),
             'gadget_emission' => (float) ($data['gadget_emission'] ?? 0),

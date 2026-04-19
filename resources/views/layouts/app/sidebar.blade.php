@@ -4,62 +4,73 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white text-zinc-900 transition-colors dark:bg-zinc-900 dark:text-zinc-100">
+        @php
+            $activeSidebarStyle = 'background:#059669;color:#ffffff;border-radius:0.35rem;box-shadow:0 10px 18px rgba(5,150,105,0.18);';
+        @endphp
         <flux:sidebar sticky collapsible="mobile" class="eco-sidebar bg-white dark:bg-zinc-950" style="display: flex; flex-direction: column; height: 100vh;">
-            <flux:sidebar.nav class="mt-0 flex-1 space-y-5 overflow-y-auto px-1 pt-1 pb-3" style="min-height: 0;">
+            <flux:sidebar.nav class="mt-0 flex-1 space-y-4 px-1 pt-1 pb-2" style="min-height: 0;">
                 <flux:sidebar.group class="space-y-1.5">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate class="eco-sidebar__item">
+                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate class="eco-sidebar__item" :style="request()->routeIs('dashboard') ? $activeSidebarStyle : ''">
                         Dashboard
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="clipboard-document-list" :href="route('carbon.history')" :current="request()->routeIs('carbon.history')" wire:navigate class="eco-sidebar__item">
+                    <flux:sidebar.item icon="clipboard-document-list" :href="route('carbon.history')" :current="request()->routeIs('carbon.history')" wire:navigate class="eco-sidebar__item" :style="request()->routeIs('carbon.history') ? $activeSidebarStyle : ''">
                         My Carbon Logs
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="sparkles" :href="route('ai.predictions')" :current="request()->routeIs('ai.predictions')" wire:navigate class="eco-sidebar__item">
+                    <flux:sidebar.item icon="sparkles" :href="route('ai.predictions')" :current="request()->routeIs('ai.predictions')" wire:navigate class="eco-sidebar__item" :style="request()->routeIs('ai.predictions') ? $activeSidebarStyle : ''">
                         AI Predictions
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
                 <flux:sidebar.group heading="SOCIAL" class="space-y-1.5">
-                    <flux:sidebar.item icon="trophy" :href="route('leaderboard')" :current="request()->routeIs('leaderboard')" wire:navigate class="eco-sidebar__item">
-                        Classroom Leaderboard
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="check-badge" :href="route('achievements')" :current="request()->routeIs('achievements')" wire:navigate class="eco-sidebar__item">
+                    <flux:sidebar.item icon="check-badge" :href="route('achievements')" :current="request()->routeIs('achievements')" wire:navigate class="eco-sidebar__item" :style="request()->routeIs('achievements') ? $activeSidebarStyle : ''">
                         Achievements
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="chat-bubble-left-right" :href="route('eco.chat')" :current="request()->routeIs('eco.chat')" wire:navigate class="eco-sidebar__item">
+                    <flux:sidebar.item icon="chat-bubble-left-right" :href="route('eco.chat')" :current="request()->routeIs('eco.chat')" wire:navigate class="eco-sidebar__item" :style="request()->routeIs('eco.chat') ? $activeSidebarStyle : ''">
                         Eco Chat (AI Chatbot)
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
-                <flux:sidebar.group heading="RESOURCES" class="space-y-1.5">
-                    <flux:sidebar.item icon="light-bulb" :href="route('eco.tips')" :current="request()->routeIs('eco.tips')" wire:navigate class="eco-sidebar__item">
-                        Eco Tips
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="book-open" :href="route('reports')" :current="request()->routeIs('reports')" wire:navigate class="eco-sidebar__item">
-                        Reports
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
+                <div class="eco-sidebar__stack">
+                    <flux:sidebar.group heading="RESOURCES" class="space-y-1.5">
+                        <flux:sidebar.item icon="light-bulb" :href="route('eco.tips')" :current="request()->routeIs('eco.tips')" wire:navigate class="eco-sidebar__item" :style="request()->routeIs('eco.tips') ? $activeSidebarStyle : ''">
+                            Eco Tips
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="book-open" :href="route('reports')" :current="request()->routeIs('reports')" wire:navigate class="eco-sidebar__item" :style="request()->routeIs('reports') ? $activeSidebarStyle : ''">
+                            Reports
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+
+                    <flux:sidebar.group heading="CONTROLS" class="space-y-1.5">
+                        <flux:sidebar.item icon="cog-6-tooth" href="{{ url('/settings/profile') }}" :current="request()->is('settings/profile')" wire:navigate class="eco-sidebar__item" :style="request()->is('settings/profile') ? $activeSidebarStyle : ''">
+                            Settings
+                        </flux:sidebar.item>
+
+                        @if (auth()->user()->is_admin)
+                            <flux:sidebar.item icon="wrench-screwdriver" :href="route('admin')" :current="request()->routeIs('admin')" wire:navigate class="eco-sidebar__item" :style="request()->routeIs('admin') ? $activeSidebarStyle : ''">
+                                Admin Panel
+                            </flux:sidebar.item>
+                        @endif
+
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <flux:sidebar.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="eco-sidebar__item w-full cursor-pointer">
+                                Logout
+                            </flux:sidebar.item>
+                        </form>
+                    </flux:sidebar.group>
+                </div>
             </flux:sidebar.nav>
 
-            <flux:sidebar.nav class="px-1 py-3" style="flex-shrink: 0;">
-                <flux:sidebar.group heading="CONTROLS" class="space-y-1.5">
-                    <flux:sidebar.item icon="cog-6-tooth" href="{{ url('/settings/profile') }}" :current="request()->is('settings/profile')" wire:navigate class="eco-sidebar__item">
-                        Settings
-                    </flux:sidebar.item>
-
-                    @if (auth()->user()->is_admin)
-                        <flux:sidebar.item icon="wrench-screwdriver" :href="route('admin')" :current="request()->routeIs('admin')" wire:navigate class="eco-sidebar__item">
-                            Admin Panel
-                        </flux:sidebar.item>
-                    @endif
-
-                    <form method="POST" action="{{ route('logout') }}" class="w-full">
-                        @csrf
-                        <flux:sidebar.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="eco-sidebar__item w-full cursor-pointer">
-                            Logout
-                        </flux:sidebar.item>
-                    </form>
-                </flux:sidebar.group>
-            </flux:sidebar.nav>
+            <div class="px-1 pb-2 eco-sidebar__footer" style="flex-shrink: 0;">
+                <div class="eco-sidebar__info-box">
+                    <p class="eco-sidebar__info-kicker">Quick Eco Boost</p>
+                    <h3 class="eco-sidebar__info-title">Try one lighter habit today.</h3>
+                    <p class="eco-sidebar__info-copy">Get one practical tip in seconds.</p>
+                    <a href="{{ route('eco.tips') }}" wire:navigate class="eco-sidebar__info-cta">
+                        Open Tips
+                    </a>
+                </div>
+            </div>
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
@@ -126,6 +137,67 @@
 
         @fluxScripts
         <style>
+            .eco-sidebar__stack {
+                display: grid;
+                gap: 0.7rem;
+            }
+
+            .eco-sidebar__footer {
+                margin-top: auto;
+            }
+
+            .eco-sidebar__info-box {
+                border: 1px solid rgba(16, 185, 129, 0.16);
+                border-radius: 0.35rem;
+                background: #dff5df;
+                padding: 0.5rem;
+                box-shadow: 0 8px 16px rgba(16, 185, 129, 0.06);
+            }
+
+            .eco-sidebar__info-kicker {
+                margin: 0;
+                color: #047857;
+                font-size: 0.6rem;
+                font-weight: 800;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+            }
+
+            .eco-sidebar__info-title {
+                margin: 0.14rem 0 0;
+                color: #064e3b;
+                font-size: 0.78rem;
+                font-weight: 800;
+                line-height: 1.15;
+            }
+
+            .eco-sidebar__info-copy {
+                margin: 0.14rem 0 0;
+                color: rgba(6, 78, 59, 0.86);
+                font-size: 0.68rem;
+                line-height: 1.2;
+            }
+
+            .eco-sidebar__info-cta {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 0.38rem;
+                width: 100%;
+                border-radius: 0.35rem;
+                background: #059669;
+                padding: 0.36rem 0.55rem;
+                color: #ffffff;
+                font-size: 0.72rem;
+                font-weight: 700;
+                text-decoration: none;
+                transition: background-color 160ms ease;
+            }
+
+            .eco-sidebar__info-cta:hover {
+                background: #047857;
+            }
+
             .eco-sidebar {
                 border-right: 0 !important;
                 background: #ffffff !important;
@@ -133,6 +205,24 @@
 
             .dark .eco-sidebar {
                 background: #09090b !important;
+            }
+
+            .dark .eco-sidebar__info-box {
+                border-color: rgba(52, 211, 153, 0.18);
+                background: #17352a;
+                box-shadow: none;
+            }
+
+            .dark .eco-sidebar__info-kicker {
+                color: #6ee7b7;
+            }
+
+            .dark .eco-sidebar__info-title {
+                color: #ecfdf5;
+            }
+
+            .dark .eco-sidebar__info-copy {
+                color: rgba(209, 250, 229, 0.82);
             }
 
             .eco-sidebar a,
@@ -203,17 +293,56 @@
                 color: #059669 !important;
             }
 
-            .eco-sidebar [data-current="true"],
+            .eco-sidebar [data-current],
             .eco-sidebar [aria-current="page"] {
-                background: transparent !important;
+                background: #059669 !important;
+                border-radius: 0.35rem !important;
+                box-shadow: 0 10px 18px rgba(5, 150, 105, 0.18) !important;
             }
 
-            .eco-sidebar [data-current="true"],
-            .eco-sidebar [data-current="true"] *,
+            .eco-sidebar [data-current],
+            .eco-sidebar [data-current] *,
             .eco-sidebar [aria-current="page"],
             .eco-sidebar [aria-current="page"] * {
-                color: #059669 !important;
+                color: #ffffff !important;
             }
+
+            .eco-sidebar [data-current]:hover,
+            .eco-sidebar [aria-current="page"]:hover {
+                background: #047857 !important;
+            }
+
+            .eco-sidebar [data-current]:hover,
+            .eco-sidebar [data-current]:hover *,
+            .eco-sidebar [aria-current="page"]:hover,
+            .eco-sidebar [aria-current="page"]:hover * {
+                color: #ffffff !important;
+            }
+
+            .dark .eco-sidebar [data-current],
+            .dark .eco-sidebar [aria-current="page"] {
+                background: #047857 !important;
+                box-shadow: 0 10px 18px rgba(4, 120, 87, 0.24) !important;
+            }
+
+            .dark .eco-sidebar [data-current],
+            .dark .eco-sidebar [data-current] *,
+            .dark .eco-sidebar [aria-current="page"],
+            .dark .eco-sidebar [aria-current="page"] * {
+                color: #ffffff !important;
+            }
+
+            .eco-sidebar [data-current] svg,
+            .eco-sidebar [data-current] [data-flux-icon],
+            .eco-sidebar [aria-current="page"] svg,
+            .eco-sidebar [aria-current="page"] [data-flux-icon],
+            .dark .eco-sidebar [data-current] svg,
+            .dark .eco-sidebar [data-current] [data-flux-icon],
+            .dark .eco-sidebar [aria-current="page"] svg,
+            .dark .eco-sidebar [aria-current="page"] [data-flux-icon] {
+                color: #ffffff !important;
+            }
+
         </style>
     </body>
 </html>

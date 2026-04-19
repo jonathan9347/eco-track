@@ -16,6 +16,7 @@ class CarbonHistory extends Component
 
     public function render(): View
     {
-        return view('components.carbon-history');
+        return view('components.carbon-history')
+            ->layout('layouts.app', ['title' => 'My Carbon Logs']);
     }
 }

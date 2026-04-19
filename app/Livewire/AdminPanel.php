@@ -3,8 +3,10 @@
 namespace App\Livewire;
 
 use App\Models\User;
+use App\Services\EmissionFactorService;
 use App\Services\UserProfileService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Kreait\Firebase\Contract\Firestore;
 use Livewire\Component;
@@ -26,6 +28,7 @@ class AdminPanel extends Component
     public array $classrooms = [];
     public array $announcements = [];
     public array $challenges = [];
+    public array $apiFactorStatus = [];
 
     public function mount(): void
     {
@@ -80,7 +83,10 @@ class AdminPanel extends Component
             'updated_by' => auth()->id(),
         ]);
 
-        $this->statusMessage = 'Emission factors saved.';
+        Cache::forget('emissions:fallback:firebase');
+        $this->loadApiFactorStatus();
+
+        $this->statusMessage = 'Emission fallback factors saved.';
     }
 
     public function saveClassroom(): void
@@ -220,6 +226,7 @@ class AdminPanel extends Component
     protected function loadAdminData(): void
     {
         $this->loadFactors();
+        $this->loadApiFactorStatus();
         $this->loadClassrooms();
         $this->loadAnnouncements();
         $this->loadChallenges();
@@ -231,6 +238,23 @@ class AdminPanel extends Component
         if ($document->exists()) {
             $this->factorForm = array_replace_recursive($this->factorForm, $document->data());
         }
+    }
+
+    protected function loadApiFactorStatus(): void
+    {
+        $service = app(EmissionFactorService::class);
+
+        foreach (array_keys($this->factorForm['transport']) as $transportType) {
+            $service->getTransportFactor($transportType);
+        }
+
+        foreach (array_keys($this->factorForm['diet']) as $dietType) {
+            $service->getDietFactor($dietType);
+        }
+
+        $service->getElectricityFactor();
+
+        $this->apiFactorStatus = $service->getApiStatusSummary();
     }
 
     protected function loadClassrooms(): void

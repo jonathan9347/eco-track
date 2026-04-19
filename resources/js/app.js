@@ -10,8 +10,40 @@ const applyStoredTheme = () => {
     }
 };
 
-document.addEventListener('DOMContentLoaded', applyStoredTheme);
-document.addEventListener('livewire:navigated', applyStoredTheme);
+const syncPageTitle = () => {
+    const titleSource = document.querySelector('[data-page-title]');
+
+    if (! titleSource) {
+        return;
+    }
+
+    const nextTitle = titleSource.getAttribute('data-page-title');
+
+    if (! nextTitle) {
+        return;
+    }
+
+    document.title = nextTitle;
+
+    const titleMeta = document.head.querySelector('meta[name="title"]');
+    const ogTitleMeta = document.head.querySelector('meta[property="og:title"]');
+
+    if (titleMeta) {
+        titleMeta.setAttribute('content', nextTitle);
+    }
+
+    if (ogTitleMeta) {
+        ogTitleMeta.setAttribute('content', nextTitle);
+    }
+};
+
+const syncAppChrome = () => {
+    applyStoredTheme();
+    syncPageTitle();
+};
+
+document.addEventListener('DOMContentLoaded', syncAppChrome);
+document.addEventListener('livewire:navigated', syncAppChrome);
 window.addEventListener('storage', (event) => {
     if (event.key === 'flux.appearance') {
         applyStoredTheme();

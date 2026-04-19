@@ -7,452 +7,641 @@
     })"
     class="w-full"
 >
-    <style>
-        [x-cloak] {
-            display: none !important;
-        }
-
-        /* Modal container - completely transparent, no stacking */
-        .cc-modal-container {
-            max-width: 550px !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            border: none !important;
-        }
-
-        /* Grid layout - no background, standalone appearance */
-        .cc-modal-grid {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 0 !important;
-            min-width: 0 !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            border: none !important;
-        }
-
-        @media (max-width: 640px) {
-            .cc-modal-grid {
-                grid-template-columns: 1fr !important;
+    @once
+        <style>
+            [x-cloak] {
+                display: none !important;
             }
-        }
 
-        .cc-form-grid {
-            display: grid !important;
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 0.375rem !important; /* ~gap-1.5 - more compact */
-            min-width: 0 !important;
-        }
-
-        /* Compact padding for smaller elements */
-        .cc-form-column {
-            padding: 0.75rem !important; /* ~p-3 - more compact */
-        }
-
-        .cc-result-column {
-            padding: 0.75rem !important; /* ~p-3 - more compact */
-        }
-
-        /* Prevent parent overflow from clipping dropdown */
-        .cc-modal-container *,
-        .cc-modal-grid *,
-        .cc-form-column *,
-        .cc-result-column * {
-            overflow: visible !important;
-        }
-
-        /* shadcn-style select dropdown - compact */
-        .shadcn-select-trigger {
-            position: relative;
-        }
-
-        /* Overlay dropdown - floats above everything */
-        .shadcn-select-content {
-            position: fixed !important;
-            z-index: 9999 !important;
-            min-width: 200px !important;
-            max-height: 300px !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            background: white !important;
-            border: 1px solid #e5e5e5 !important;
-            border-radius: 0.35rem !important;
-            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
-            padding: 0.25rem !important;
-            animation: shadcn-select-in 150ms ease-out !important;
-            clip: auto !important;
-            clip-path: none !important;
-        }
-
-        .shadcn-select-content.shadcn-select-top {
-            /* Positioned above trigger */
-        }
-
-        .shadcn-select-content.shadcn-select-bottom {
-            /* Positioned below trigger */
-        }
-
-        .shadcn-select-item {
-            padding: 0.375rem 0.5rem; /* ~py-1.5 px-2 - more compact */
-            font-size: 0.75rem; /* ~text-xs - smaller text */
-            color: #171717;
-            border-radius: 0.35rem;
-            cursor: pointer;
-            transition: background-color 100ms ease;
-        }
-
-        .shadcn-select-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .shadcn-select-item[aria-selected="true"] {
-            background-color: #f5f5f5;
-            font-weight: 500;
-        }
-
-        @keyframes shadcn-select-in {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
+            .cc-card {
+                overflow: hidden;
+                border: 1px solid rgba(119, 155, 112, 0.2);
+                border-radius: 0.35rem;
+                background: linear-gradient(180deg, #ffffff 0%, #fbf8f0 100%);
             }
-            to {
-                opacity: 1;
-                transform: scale(1);
+
+            .cc-card__inner {
+                display: flex;
+                flex-direction: column;
+                gap: 1.4rem;
+                padding: 1.35rem;
             }
-        }
-    </style>
 
-    <!-- Carbon Calculator - No Container Layout -->
-    <div class="cc-modal-container">
-        <!-- Title only (no container) -->
-        <div class="text-lg font-semibold text-gray-900 mb-4">Carbon Calculator</div>
+            .cc-card__header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 1rem;
+            }
 
-        <!-- Main 2-column layout (forms left, result right) -->
-        <div class="cc-modal-grid">
-            <!-- Left Column: Form -->
-            <div class="cc-form-column min-w-0">
-                <form id="carbon-calculator-form" @submit.prevent="calculate" class="flex flex-col gap-3">
-                    <!-- 4-grid layout (2x2) -->
-                    <div class="cc-form-grid">
-                        <!-- Transport Type - shadcn-style select -->
-                        <div class="min-w-0" x-data="{
-                            open: false,
-                            value: '',
-                            placeholder: 'Select transport',
-                            options: @js($transportOptions),
-                            selectedLabel: '',
-                            dropdownStyle: '',
-                            init() {
-                                this.$watch('value', (val) => {
-                                    const opt = this.options.find(o => o.value === val);
-                                    this.selectedLabel = opt ? opt.label : '';
-                                    // Sync with parent x-model
-                                    form.transport_type = val;
-                                });
-                                // Watch parent for external changes
-                                this.$watch('form.transport_type', (val) => {
-                                    if (this.value !== val) {
-                                        this.value = val;
-                                        const opt = this.options.find(o => o.value === val);
-                                        this.selectedLabel = opt ? opt.label : '';
-                                    }
-                                });
-                            },
-                            select(val, label) {
-                                this.value = val;
-                                this.selectedLabel = label;
-                                this.open = false;
-                            },
-                            toggle() {
-                                if (this.open) {
-                                    this.open = false;
-                                    this.dropdownStyle = '';
-                                    return;
-                                }
-                                this.open = true;
-                                this.$nextTick(() => {
-                                    const trigger = this.$el.querySelector('.shadcn-select-trigger button');
-                                    const rect = trigger.getBoundingClientRect();
-                                    this.dropdownStyle = `top: ${rect.bottom + 4}px; left: ${rect.left}px; width: ${rect.width}px;`;
-                                });
-                            },
-                            get isOpen() { return this.open; },
-                            get displayValue() { return this.selectedLabel || this.placeholder; }
-                        }">
-                            <label class="block text-xs font-medium text-gray-700 mb-1">Transport Type</label>
-                            <div class="shadcn-select-trigger">
-                                 <button
-                                     type="button"
-                                     @click="toggle()"
-                                     @click.away="open = false; dropdownStyle = ''"
-                                     :aria-expanded="open"
-                                     aria-haspopup="listbox"
-                                     class="flex h-9 w-full items-center justify-between border border-gray-300 bg-white px-2.5 py-1.5 text-xs placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-left"
-                                     style="border-radius: 0.35rem !important;"
-                                     :class="open && 'ring-2 ring-emerald-600 ring-offset-2'"
-                                 >
-                                    <span x-text="displayValue" :class="!value && 'text-gray-500'"></span>
-                                    <svg class="h-3.5 w-3.5 shrink-0 text-gray-500 transition-transform duration-200" :class="open && 'rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
-                                    </svg>
-                                </button>
-                                <div
-                                    x-show="open"
-                                    x-cloak
-                                    x-transition:enter="transition ease-out duration-150"
-                                    x-transition:enter-start="opacity-0 scale-95"
-                                    x-transition:enter-end="opacity-100 scale-100"
-                                    x-transition:leave="transition ease-in duration-100"
-                                    x-transition:leave-start="opacity-100 scale-100"
-                                    x-transition:leave-end="opacity-0 scale-95"
-                                    class="shadcn-select-content shadcn-select-bottom"
-                                    role="listbox"
-                                    :style="dropdownStyle"
-                                >
-                                    <div
-                                        class="shadcn-select-item"
-                                        @click="select('', 'Select transport')"
-                                        :aria-selected="!value"
-                                        role="option"
-                                    >
-                                        Select transport
-                                    </div>
-                                    <template x-for="opt in options" :key="opt.value">
-                                        <div
-                                            class="shadcn-select-item"
-                                            @click="select(opt.value, opt.label)"
-                                            :aria-selected="value === opt.value"
-                                            role="option"
-                                            x-text="opt.label"
-                                        ></div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
+            .cc-card__title {
+                margin: 0;
+                color: #1f2f1f;
+                font-size: 1.55rem;
+                font-weight: 800;
+                letter-spacing: -0.04em;
+            }
 
-                        <!-- Distance -->
-                        <div class="min-w-0">
-                            <label for="distance" class="block text-xs font-medium text-gray-700 mb-1">Distance (km)</label>
-                            <input
-                                id="distance"
-                                x-model="form.distance"
-                                type="number"
-                                min="0"
-                                step="0.1"
-                                class="flex h-9 w-full border border-gray-300 bg-white px-2.5 py-1.5 text-xs placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                style="border-radius: 0.35rem !important;"
-                                placeholder="0.0"
-                            >
-                        </div>
+            .cc-card__subtitle {
+                margin: 0.35rem 0 0;
+                color: #6d7868;
+                font-size: 0.92rem;
+                line-height: 1.55;
+            }
 
-                        <!-- Diet Type - shadcn-style select -->
-                        <div class="min-w-0" x-data="{
-                            open: false,
-                            value: '',
-                            placeholder: 'Select diet',
-                            options: @js($dietOptions),
-                            selectedLabel: '',
-                            dropdownStyle: '',
-                            init() {
-                                this.$watch('value', (val) => {
-                                    const opt = this.options.find(o => o.value === val);
-                                    this.selectedLabel = opt ? opt.label : '';
-                                    // Sync with parent x-model
-                                    form.diet_type = val;
-                                });
-                                // Watch parent for external changes
-                                this.$watch('form.diet_type', (val) => {
-                                    if (this.value !== val) {
-                                        this.value = val;
-                                        const opt = this.options.find(o => o.value === val);
-                                        this.selectedLabel = opt ? opt.label : '';
-                                    }
-                                });
-                            },
-                            select(val, label) {
-                                this.value = val;
-                                this.selectedLabel = label;
-                                this.open = false;
-                                this.dropdownStyle = '';
-                            },
-                            toggle() {
-                                if (this.open) {
-                                    this.open = false;
-                                    this.dropdownStyle = '';
-                                    return;
-                                }
-                                this.open = true;
-                                this.$nextTick(() => {
-                                    const trigger = this.$el.querySelector('.shadcn-select-trigger button');
-                                    const rect = trigger.getBoundingClientRect();
-                                    this.dropdownStyle = `top: ${rect.bottom + 4}px; left: ${rect.left}px; width: ${rect.width}px;`;
-                                });
-                            },
-                            get isOpen() { return this.open; },
-                            get displayValue() { return this.selectedLabel || this.placeholder; }
-                        }">
-                            <label class="block text-xs font-medium text-gray-700 mb-1">Diet Type</label>
-                            <div class="shadcn-select-trigger">
-                                 <button
-                                     type="button"
-                                     @click="toggle()"
-                                     @click.away="open = false; dropdownStyle = ''"
-                                     :aria-expanded="open"
-                                     aria-haspopup="listbox"
-                                     class="flex h-9 w-full items-center justify-between border border-gray-300 bg-white px-2.5 py-1.5 text-xs placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 text-left"
-                                     style="border-radius: 0.35rem !important;"
-                                     :class="open && 'ring-2 ring-emerald-600 ring-offset-2'"
-                                 >
-                                     <span x-text="displayValue" :class="!value && 'text-gray-500'"></span>
-                                     <svg class="h-3.5 w-3.5 shrink-0 text-gray-500 transition-transform duration-200" :class="open && 'rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
-                                     </svg>
-                                 </button>
-                                 <div
-                                     x-show="open"
-                                     x-cloak
-                                     x-transition:enter="transition ease-out duration-150"
-                                     x-transition:enter-start="opacity-0 scale-95"
-                                     x-transition:enter-end="opacity-100 scale-100"
-                                     x-transition:leave="transition ease-in duration-100"
-                                     x-transition:leave-start="opacity-100 scale-100"
-                                     x-transition:leave-end="opacity-0 scale-95"
-                                     class="shadcn-select-content shadcn-select-bottom"
-                                     role="listbox"
-                                     :style="dropdownStyle"
-                                 >
-                                     <div
-                                         class="shadcn-select-item"
-                                         @click="select('', 'Select diet')"
-                                         :aria-selected="!value"
-                                         role="option"
-                                     >
-                                         Select diet
-                                     </div>
-                                    <template x-for="opt in options" :key="opt.value">
-                                        <div
-                                            class="shadcn-select-item"
-                                            @click="select(opt.value, opt.label)"
-                                            :aria-selected="value === opt.value"
-                                            role="option"
-                                            x-text="opt.label"
-                                        ></div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
+            .cc-card__pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+                padding: 0.5rem 0.75rem;
+                border-radius: 999px;
+                background: #eef4e7;
+                color: #476447;
+                font-size: 0.78rem;
+                font-weight: 700;
+                white-space: nowrap;
+            }
 
-                        <!-- Gadget Hours -->
-                        <div class="min-w-0">
-                            <label for="gadget_hours" class="block text-xs font-medium text-gray-700 mb-1">Gadget Hours</label>
-                            <input
-                                id="gadget_hours"
-                                x-model="form.gadget_hours"
-                                type="number"
-                                min="0"
-                                step="0.1"
-                                class="flex h-9 w-full border border-gray-300 bg-white px-2.5 py-1.5 text-xs placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                style="border-radius: 0.35rem !important;"
-                                placeholder="0.0"
-                            >
-                        </div>
-                    </div>
+            .cc-form {
+                display: flex;
+                flex-direction: column;
+                gap: 1.1rem;
+            }
 
-                    <!-- Error Message -->
-                    <template x-if="error">
-                        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3" style="border-radius: 0.35rem !important;" x-text="error"></div>
-                    </template>
+            .cc-row {
+                display: grid;
+                gap: 0.75rem;
+                padding: 1rem;
+                border: 1px solid rgba(111, 149, 95, 0.12);
+                border-radius: 0.35rem;
+                background: rgba(250, 251, 246, 0.92);
+            }
 
-                    <!-- Actions -->
-                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
-                        <button
-                            type="submit"
-                            class="shadcn-btn shadcn-btn-primary inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-medium shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md active:scale-[0.98] px-4 py-2 w-full sm:w-auto"
-                            style="border-radius: 0.35rem !important;"
-                            :disabled="loading"
-                        >
-                            <span x-show="!loading">Calculate</span>
-                            <span x-show="loading">Calculating...</span>
-                        </button>
+            .cc-row__top {
+                display: grid;
+                grid-template-columns: auto minmax(0, 1fr);
+                gap: 0.8rem;
+                align-items: start;
+            }
 
-                        <button
-                            type="button"
-                            @click="save"
-                            class="shadcn-btn shadcn-btn-secondary inline-flex items-center justify-center gap-2 whitespace-nowrap text-xs font-medium shadow-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-900 text-white hover:bg-gray-800 hover:shadow-md active:scale-[0.98] px-4 py-2 w-full sm:w-auto"
-                            style="border-radius: 0.35rem !important;"
-                            :disabled="!result || saving"
-                        >
-                            <span x-show="!saving">Save Log</span>
-                            <span x-show="saving">Saving...</span>
-                        </button>
-                    </div>
-                </form>
-            </div>
+            .cc-row__icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 2.7rem;
+                height: 2.7rem;
+                border-radius: 999px;
+                background: #e2edd9;
+                color: #486847;
+            }
 
-            <!-- Right Column: Results -->
-            <div class="cc-result-column min-w-0">
-                <div class="flex items-start justify-start">
-                    <template x-if="result">
-                        <div class="w-full max-w-none">
-                            <div class="text-center">
-                                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Emissions</h3>
-                                <div class="mt-1.5">
-                                    <span class="text-3xl font-bold text-gray-900" x-text="result.total_emission"></span>
-                                    <span class="text-xl font-semibold text-gray-600 ml-1">kg CO₂</span>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-4 grid grid-cols-3 gap-2">
-                                <div class="text-center">
-                                    <div class="text-[10px] text-gray-500 uppercase font-semibold">Transport</div>
-                                    <div class="mt-0.5 text-base font-bold" x-text="result.breakdown.transport + ' kg'"></div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-[10px] text-gray-500 uppercase font-semibold">Diet</div>
-                                    <div class="mt-0.5 text-base font-bold" x-text="result.breakdown.diet + ' kg'"></div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-[10px] text-gray-500 uppercase font-semibold">Gadgets</div>
-                                    <div class="mt-0.5 text-base font-bold" x-text="result.breakdown.gadgets + ' kg'"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </template>
+            .cc-row__icon svg {
+                width: 1.2rem;
+                height: 1.2rem;
+            }
 
-                    <template x-if="!result">
-                        <div class="w-full max-w-none text-center">
-                            <div class="mb-3">
-                                <svg class="w-12 h-12 text-emerald-500 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect width="7" height="7" x="3" y="3" rx="1" />
-                                    <rect width="7" height="7" x="14" y="3" rx="1" />
-                                    <rect width="7" height="7" x="14" y="14" rx="1" />
-                                    <rect width="7" height="7" x="3" y="14" rx="1" />
-                                </svg>
-                            </div>
-                            <h3 class="text-base font-semibold text-gray-900 mb-1.5">Calculate Your Impact</h3>
-                            <p class="text-gray-600 text-xs">Fill in the form and click Calculate to see your carbon footprint estimate.</p>
-                        </div>
-                    </template>
+            .cc-row__label {
+                margin: 0;
+                color: #223523;
+                font-size: 1rem;
+                font-weight: 700;
+                line-height: 1.2;
+            }
+
+            .cc-row__help {
+                margin: 0.18rem 0 0;
+                color: #6f7a6d;
+                font-size: 0.8rem;
+                line-height: 1.45;
+            }
+
+            .cc-row__controls {
+                display: grid;
+                gap: 0.7rem;
+            }
+
+            .cc-select,
+            .cc-input {
+                width: 100%;
+                min-height: 2.85rem;
+                border: 1px solid #d8dfd1;
+                border-radius: 0.35rem;
+                background: #ffffff;
+                color: #223223;
+                font-size: 0.92rem;
+                padding: 0.7rem 0.85rem;
+                outline: none;
+                transition: border-color 140ms ease, box-shadow 140ms ease;
+            }
+
+            .cc-select:focus,
+            .cc-input:focus {
+                border-color: #73976a;
+                box-shadow: 0 0 0 4px rgba(111, 149, 95, 0.14);
+            }
+
+            .cc-range-wrap {
+                display: grid;
+                gap: 0.5rem;
+            }
+
+            .cc-range-meta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.75rem;
+                color: #62705e;
+                font-size: 0.78rem;
+                font-weight: 700;
+            }
+
+            .cc-range {
+                width: 100%;
+                height: 0.42rem;
+                appearance: none;
+                border-radius: 999px;
+                background: linear-gradient(90deg, #7fab77 0%, #d9e3ce 100%);
+                outline: none;
+            }
+
+            .cc-range::-webkit-slider-thumb {
+                appearance: none;
+                width: 1.1rem;
+                height: 1.1rem;
+                border: 3px solid #6f955f;
+                border-radius: 999px;
+                background: #fffefb;
+                box-shadow: 0 4px 10px rgba(67, 99, 61, 0.16);
+                cursor: pointer;
+            }
+
+            .cc-range::-moz-range-thumb {
+                width: 1.1rem;
+                height: 1.1rem;
+                border: 3px solid #6f955f;
+                border-radius: 999px;
+                background: #fffefb;
+                box-shadow: 0 4px 10px rgba(67, 99, 61, 0.16);
+                cursor: pointer;
+            }
+
+            .cc-actions {
+                display: grid;
+                gap: 0.75rem;
+            }
+
+            .cc-button {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 3rem;
+                border: 0;
+                border-radius: 0.35rem;
+                font-size: 0.95rem;
+                font-weight: 800;
+                transition: transform 140ms ease, background-color 140ms ease, opacity 140ms ease;
+                cursor: pointer;
+            }
+
+            .cc-button:disabled {
+                opacity: 0.55;
+                cursor: not-allowed;
+            }
+
+            .cc-button:active:not(:disabled) {
+                transform: translateY(1px);
+            }
+
+            .cc-button--primary {
+                background: #295c36;
+                color: #fffef8;
+            }
+
+            .cc-button--primary:hover:not(:disabled) {
+                background: #214e2d;
+            }
+
+            .cc-button--secondary {
+                background: #edf3e9;
+                color: #34523a;
+            }
+
+            .cc-button--secondary:hover:not(:disabled) {
+                background: #e2ecdd;
+            }
+
+            .cc-error {
+                border: 1px solid #f0c8c8;
+                border-radius: 0.35rem;
+                background: #fff1f1;
+                color: #b63a3a;
+                font-size: 0.88rem;
+                line-height: 1.45;
+                padding: 0.85rem 0.95rem;
+            }
+
+            .cc-results {
+                display: grid;
+                gap: 0.8rem;
+                padding: 1rem;
+                border: 1px solid rgba(111, 149, 95, 0.14);
+                border-radius: 0.35rem;
+                background: linear-gradient(180deg, #f6fbf3 0%, #eff6ea 100%);
+            }
+
+            .cc-loading {
+                display: grid;
+                justify-items: center;
+                gap: 0.15rem;
+                padding: 0.2rem 0.75rem 0.45rem;
+                border: 1px solid rgba(111, 149, 95, 0.14);
+                border-radius: 0.35rem;
+                background: #ffffff;
+                text-align: center;
+            }
+
+            .cc-loading__title {
+                color: #295c36;
+                font-size: 0.95rem;
+                font-weight: 800;
+            }
+
+            .cc-loading__copy {
+                max-width: 22rem;
+                color: #62705e;
+                font-size: 0.8rem;
+                line-height: 1.45;
+            }
+
+            .cc-loading dotlottie-wc {
+                display: block;
+                width: 300px;
+                height: 220px;
+                max-width: 100%;
+            }
+
+            .cc-results__eyebrow {
+                margin: 0;
+                color: #5c6d57;
+                font-size: 0.72rem;
+                font-weight: 700;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+            }
+
+            .cc-results__total {
+                display: flex;
+                align-items: baseline;
+                gap: 0.35rem;
+                margin: 0;
+            }
+
+            .cc-results__value {
+                color: #24402b;
+                font-size: 2.4rem;
+                font-weight: 800;
+                line-height: 1;
+                letter-spacing: -0.05em;
+            }
+
+            .cc-results__unit {
+                color: #5d705f;
+                font-size: 1rem;
+                font-weight: 700;
+            }
+
+            .cc-breakdown {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.65rem;
+            }
+
+            .cc-breakdown__item {
+                padding: 0.75rem;
+                border-radius: 0.35rem;
+                background: rgba(255, 255, 255, 0.8);
+            }
+
+            .cc-breakdown__label {
+                margin: 0;
+                color: #6d7868;
+                font-size: 0.72rem;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+
+            .cc-breakdown__value {
+                margin: 0.35rem 0 0;
+                color: #203225;
+                font-size: 1.05rem;
+                font-weight: 800;
+            }
+
+            .cc-empty {
+                display: grid;
+                gap: 0.55rem;
+                align-items: start;
+                padding: 1rem;
+                border: 1px dashed rgba(111, 149, 95, 0.28);
+                border-radius: 0.35rem;
+                background: rgba(255, 255, 255, 0.55);
+            }
+
+            .cc-empty__title {
+                margin: 0;
+                color: #243425;
+                font-size: 1rem;
+                font-weight: 800;
+            }
+
+            .cc-empty__copy {
+                margin: 0;
+                color: #6d7868;
+                font-size: 0.86rem;
+                line-height: 1.5;
+            }
+
+            .cc-toast {
+                position: fixed;
+                right: 1rem;
+                bottom: 1rem;
+                z-index: 50;
+                border-radius: 0.35rem;
+                background: #295c36;
+                color: #fffef8;
+                padding: 0.85rem 1rem;
+            }
+
+            .dark .cc-card {
+                border-color: rgba(129, 164, 123, 0.12);
+                background: linear-gradient(180deg, #111712 0%, #0d130f 100%);
+            }
+
+            .dark .cc-card__title,
+            .dark .cc-row__label,
+            .dark .cc-results__value,
+            .dark .cc-breakdown__value,
+            .dark .cc-empty__title {
+                color: #eef5e8;
+            }
+
+            .dark .cc-card__subtitle,
+            .dark .cc-row__help,
+            .dark .cc-range-meta,
+            .dark .cc-results__eyebrow,
+            .dark .cc-results__unit,
+            .dark .cc-breakdown__label,
+            .dark .cc-empty__copy {
+                color: #9daf9f;
+            }
+
+            .dark .cc-card__pill,
+            .dark .cc-row {
+                background: rgba(20, 28, 22, 0.92);
+                border-color: rgba(129, 164, 123, 0.12);
+            }
+
+            .dark .cc-row__icon {
+                background: #203126;
+                color: #afd29e;
+            }
+
+            .dark .cc-select,
+            .dark .cc-input {
+                border-color: #2d3f31;
+                background: #121914;
+                color: #edf5ea;
+            }
+
+            .dark .cc-results {
+                border-color: rgba(129, 164, 123, 0.14);
+                background: linear-gradient(180deg, #111912 0%, #101611 100%);
+            }
+
+            .dark .cc-breakdown__item,
+            .dark .cc-empty {
+                background: rgba(17, 24, 18, 0.85);
+            }
+
+            .dark .cc-empty {
+                border-color: rgba(129, 164, 123, 0.18);
+            }
+
+            @media (min-width: 640px) {
+                .cc-actions {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+            }
+        </style>
+    @endonce
+
+    <div class="cc-card">
+        <div class="cc-card__inner">
+            <div class="cc-card__header">
+                <div>
+                    <h3 class="cc-card__title">Carbon Calculator</h3>
+                    <p class="cc-card__subtitle">Log a quick commute, device session, and meal choice without leaving the dashboard.</p>
                 </div>
+
+                <div class="cc-card__pill">Live estimate</div>
             </div>
+
+            <form id="carbon-calculator-form" @submit.prevent="calculate" class="cc-form">
+                <div class="cc-row">
+                    <div class="cc-row__top">
+                        <div class="cc-row__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13l1.5-4.5A3 3 0 0 1 7.35 6.5h9.3a3 3 0 0 1 2.85 2L21 13" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13h14v4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H8v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-4Z" />
+                                <circle cx="7.5" cy="14.5" r="1" fill="currentColor" stroke="none" />
+                                <circle cx="16.5" cy="14.5" r="1" fill="currentColor" stroke="none" />
+                            </svg>
+                        </div>
+
+                        <div class="min-w-0">
+                            <p class="cc-row__label">Commute</p>
+                            <p class="cc-row__help">Choose your transport and adjust the round-trip distance.</p>
+                        </div>
+                    </div>
+
+                    <div class="cc-row__controls">
+                        <select x-model="form.transport_type" class="cc-select">
+                            <option value="">Select transport</option>
+                            @foreach ($transportOptions as $option)
+                                <option value="{{ $option['value'] }}">{{ $option['label'] }}</option>
+                            @endforeach
+                        </select>
+
+                        <input
+                            x-model="form.distance"
+                            type="number"
+                            min="0"
+                            max="200"
+                            step="0.1"
+                            class="cc-input"
+                            placeholder="Distance in km"
+                        >
+
+                        <div class="cc-range-wrap">
+                            <div class="cc-range-meta">
+                                <span>0 km</span>
+                                <span x-text="`${Number(form.distance || 0).toFixed(1)} km`"></span>
+                                <span>200 km</span>
+                            </div>
+
+                            <input x-model="form.distance" type="range" min="0" max="200" step="1" class="cc-range">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cc-row">
+                    <div class="cc-row__top">
+                        <div class="cc-row__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 18h6" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10 22h4" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 2a6 6 0 0 0-3.7 10.72c.55.44.96 1.05 1.14 1.73L9.5 15h5l.06-.55c.18-.68.59-1.29 1.14-1.73A6 6 0 0 0 12 2Z" />
+                            </svg>
+                        </div>
+
+                        <div class="min-w-0">
+                            <p class="cc-row__label">Device Use</p>
+                            <p class="cc-row__help">Estimate screen time or gadget usage for the day.</p>
+                        </div>
+                    </div>
+
+                    <div class="cc-row__controls">
+                        <select x-model="form.gadget_type" class="cc-select">
+                            <option value="laptop">Laptop</option>
+                            <option value="smartphone">Smartphone</option>
+                            <option value="tablet">Tablet</option>
+                            <option value="desktop_pc">Desktop PC</option>
+                            <option value="monitor">Monitor</option>
+                        </select>
+
+                        <input
+                            x-model="form.gadget_hours"
+                            type="number"
+                            min="0"
+                            max="24"
+                            step="0.1"
+                            class="cc-input"
+                            placeholder="Hours used"
+                        >
+
+                        <div class="cc-range-wrap">
+                            <div class="cc-range-meta">
+                                <span>0 hrs</span>
+                                <span x-text="`${Number(form.gadget_hours || 0).toFixed(1)} hrs`"></span>
+                                <span>24 hrs</span>
+                            </div>
+
+                            <input x-model="form.gadget_hours" type="range" min="0" max="24" step="0.5" class="cc-range">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cc-row">
+                    <div class="cc-row__top">
+                        <div class="cc-row__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 12h12" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 8h8" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 16h10" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 4h14l-1 16H6L5 4Z" />
+                            </svg>
+                        </div>
+
+                        <div class="min-w-0">
+                            <p class="cc-row__label">Diet</p>
+                            <p class="cc-row__help">Pick the meal pattern that best matches today.</p>
+                        </div>
+                    </div>
+
+                    <div class="cc-row__controls">
+                        <select x-model="form.diet_type" class="cc-select">
+                            <option value="">Select diet</option>
+                            @foreach ($dietOptions as $option)
+                                <option value="{{ $option['value'] }}">{{ $option['label'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <template x-if="error">
+                    <div class="cc-error" x-text="error"></div>
+                </template>
+
+                <template x-if="loading">
+                    <div class="cc-loading">
+                        <dotlottie-wc
+                            src="https://lottie.host/001cfd71-a974-4ad6-bbf7-eb5473be1654/uoBhWjhEv1.lottie"
+                            style="width: 300px; height: 300px;"
+                            autoplay
+                            loop
+                        ></dotlottie-wc>
+                        <p class="cc-loading__title">Calculating your impact...</p>
+                        <p class="cc-loading__copy">We are checking your transport, diet, and gadget activity before showing your updated footprint.</p>
+                    </div>
+                </template>
+
+                <template x-if="!loading && result">
+                    <div class="cc-results">
+                        <p class="cc-results__eyebrow">Estimated footprint</p>
+
+                        <p class="cc-results__total">
+                            <span class="cc-results__value" x-text="result.total_emission"></span>
+                            <span class="cc-results__unit">kg CO2e</span>
+                        </p>
+
+                        <div class="cc-breakdown">
+                            <div class="cc-breakdown__item">
+                                <p class="cc-breakdown__label">Transport</p>
+                                <p class="cc-breakdown__value" x-text="`${result.breakdown.transport} kg`"></p>
+                            </div>
+
+                            <div class="cc-breakdown__item">
+                                <p class="cc-breakdown__label">Diet</p>
+                                <p class="cc-breakdown__value" x-text="`${result.breakdown.diet} kg`"></p>
+                            </div>
+
+                            <div class="cc-breakdown__item">
+                                <p class="cc-breakdown__label">Gadgets</p>
+                                <p class="cc-breakdown__value" x-text="`${result.breakdown.gadgets} kg`"></p>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="!loading && !result">
+                    <div class="cc-empty">
+                        <p class="cc-empty__title">Calculate your impact</p>
+                        <p class="cc-empty__copy">Use the controls above to get a quick estimate, then save it directly to your carbon log.</p>
+                    </div>
+                </template>
+
+                <div class="cc-actions">
+                    <button type="submit" class="cc-button cc-button--primary" :disabled="loading">
+                        <span x-show="!loading">Calculate</span>
+                        <span x-show="loading">Calculating...</span>
+                    </button>
+
+                    <button type="button" @click="save" class="cc-button cc-button--secondary" :disabled="!result || saving">
+                        <span x-show="!saving">Save Log</span>
+                        <span x-show="saving">Saving...</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-    <!-- End Carbon Calculator -->
 
-    <!-- Toast notification -->
-    <div
-        x-show="toast.show"
-        x-transition.opacity.duration.250ms
-        x-cloak
-        class="fixed bottom-4 right-4 bg-emerald-600 text-white px-4 py-2 shadow-lg"
-        style="border-radius: 0.35rem !important;"
-    >
+    <div x-show="toast.show" x-transition.opacity.duration.250ms class="cc-toast" x-cloak>
         <p x-text="toast.message"></p>
     </div>
 </section>
 
+<script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.10/dist/dotlottie-wc.js" type="module"></script>
 <script>
     function carbonCalculator({ calculateUrl, saveUrl, csrfToken, userId }) {
         return {
@@ -460,6 +649,7 @@
                 transport_type: '',
                 distance: '',
                 diet_type: '',
+                gadget_type: 'laptop',
                 gadget_hours: '',
             },
             result: null,
@@ -474,9 +664,12 @@
             async calculate() {
                 this.loading = true;
                 this.error = '';
+                this.result = null;
+                const minimumAnimationTime = 3000;
+                const animationDelay = new Promise((resolve) => window.setTimeout(resolve, minimumAnimationTime));
 
                 try {
-                    const response = await fetch(calculateUrl, {
+                    const responsePromise = fetch(calculateUrl, {
                         method: 'POST',
                         credentials: 'same-origin',
                         headers: {
@@ -486,6 +679,8 @@
                         },
                         body: JSON.stringify(this.form),
                     });
+
+                    const [response] = await Promise.all([responsePromise, animationDelay]);
 
                     const data = await response.json();
 

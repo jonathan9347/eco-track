@@ -88,17 +88,6 @@
                             </svg>
                             <span>View Logs</span>
                         </a>
-                        <a href="{{ url('/leaderboard') }}" wire:navigate class="relative flex cursor-pointer select-none items-center rounded-md px-2 py-2 text-sm outline-none hover:bg-zinc-100">
-                            <svg class="mr-2 h-4 w-4 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-                                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-                                <path d="M4 22h16"/>
-                                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-                                <path d="M14 14.66V17c0 .55-.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-                                <path d="M18 2h-6c-.83 0-1.5.67-1.5 1.5v5.21c0 .4.17.78.47 1.05l3.03 2.73a1.5 1.5 0 0 0 2 0l3.03-2.73c.3-.27.47-.65.47-1.05V3.5c0-.83-.67-1.5-1.5-1.5Z"/>
-                            </svg>
-                            <span>Classroom Leaderboard</span>
-                        </a>
                     </div>
                 </div>
 

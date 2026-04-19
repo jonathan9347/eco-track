@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.3",
         "google/cloud-firestore": "^1.55",
+        "guzzlehttp/guzzle": "^7.10",
         "kreait/laravel-firebase": "^7.1",
         "laravel/fortify": "^1.34",
         "laravel/framework": "^13.0",
