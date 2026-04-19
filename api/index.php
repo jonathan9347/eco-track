@@ -1,15 +1,28 @@
 <?php
-// Load Composer dependencies
-if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    require __DIR__ . '/../vendor/autoload.php';
-} else {
-    die('Vendor autoload not found. Please run composer install');
+
+// Set up temporary directory
+$tempDir = '/tmp/laravel-' . uniqid();
+if (!is_dir($tempDir)) {
+    mkdir($tempDir, 0755, true);
+}
+putenv("TMPDIR=$tempDir");
+putenv("TEMP=$tempDir");
+putenv("TMP=$tempDir");
+
+// Load Composer autoloader
+$composerAutoload = __DIR__ . '/../vendor/autoload.php';
+
+if (!file_exists($composerAutoload)) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Composer autoload not found.']);
+    exit;
 }
 
-// Load environment variables
-if (file_exists(__DIR__ . '/../.env')) {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
-    $dotenv->load();
+require $composerAutoload;
+
+// Set custom view compiled path
+if (function_exists('config')) {
+    config(['view.compiled' => $tempDir . '/views']);
 }
 
 // Create Laravel application
