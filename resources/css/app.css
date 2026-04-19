@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@import '../../vendor/livewire/flux/dist/flux.css';
 @import './flux-dist/flux.css';
 
 @source '../views/**/*.{blade.php,html}';
