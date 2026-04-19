@@ -1,10 +1,20 @@
 {
   "functions": {
-    "api/index.php": { "runtime": "vercel-php@0.5.2" }
+    "api/index.php": {
+      "runtime": "vercel-php@0.5.2"
+    }
   },
   "routes": [
-    { "src": "/(.*)", "dest": "/api/index.php" }
+    {
+      "src": "/(.*\\.(css|js|jpg|png|ico|svg|json|txt|xml|webmanifest))",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.php"
+    }
   ],
-  "buildCommand": "composer install --no-dev --optimize-autoloader && npm run build",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
   "outputDirectory": "public"
 }
