@@ -20,13 +20,16 @@ if (!file_exists($composerAutoload)) {
 
 require $composerAutoload;
 
-// Set custom view compiled path
-if (function_exists('config')) {
-    config(['view.compiled' => $tempDir . '/views']);
-}
-
 // Create Laravel application
 $app = require_once __DIR__ . '/../bootstrap/app.php';
+
+// Set the temp directory for views after app is created
+if (method_exists($app, 'useStoragePath')) {
+    $app->useStoragePath($tempDir);
+}
+
+// Set view compiled path
+$app['config']->set('view.compiled', $tempDir . '/views');
 
 // Handle the request
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
