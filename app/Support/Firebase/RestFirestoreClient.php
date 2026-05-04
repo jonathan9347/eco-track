@@ -37,16 +37,26 @@ class RestFirestoreClient extends FirestoreClient
             $url .= '?'.$this->queryString($query);
         }
 
+        $options = [];
+
+        if ($body !== []) {
+            $options['json'] = $body;
+        }
+
         $response = Http::withToken($this->accessToken())
             ->acceptJson()
             ->asJson()
             ->timeout(20)
-            ->send($method, $url, [
-                'json' => $body,
-            ]);
+            ->send($method, $url, $options);
 
         if ($response->failed()) {
-            throw new RuntimeException('Firestore REST request failed with status '.$response->status().': '.$response->body());
+            throw new RuntimeException(sprintf(
+                'Firestore REST request failed with status %s for %s %s: %s',
+                $response->status(),
+                $method,
+                $path,
+                $response->body(),
+            ));
         }
 
         return $response->json() ?? [];
@@ -121,7 +131,7 @@ class RestFirestoreClient extends FirestoreClient
         return sprintf(
             'https://firestore.googleapis.com/v1/projects/%s/databases/%s/%s',
             rawurlencode($this->projectId()),
-            rawurlencode($this->databaseId()),
+            trim($this->databaseId(), '/'),
             $documentsPath,
         );
     }
