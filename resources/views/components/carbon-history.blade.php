@@ -4,7 +4,7 @@
         csrfToken: '{{ csrf_token() }}',
     })"
     x-init="init()"
-    class="w-full px-2 py-2"
+    class="eco-page-palette w-full px-2 py-2"
 >
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -75,10 +75,10 @@
                 <div class="border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700" style="border-radius: 0.35rem !important;" x-text="error"></div>
             </template>
 
-            <div class="border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950" style="border-radius: 0.30rem !important;">
+            <div class="eco-page-card eco-page-card--emerald border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950" style="border-radius: 0.30rem !important;">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-800">
-                        <thead class="bg-zinc-50 dark:bg-zinc-900">
+                        <thead class="bg-emerald-100 dark:bg-emerald-950/40">
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.22em] text-zinc-500">Date</th>
                                 <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.22em] text-zinc-500">Transport</th>
@@ -98,7 +98,7 @@
                             </template>
 
                             <template x-for="log in filteredLogs" :key="log.id">
-                                <tr class="hover:bg-zinc-50/80 dark:hover:bg-zinc-900">
+                                <tr class="hover:bg-emerald-50/80 dark:hover:bg-emerald-950/30">
                                     <td class="whitespace-nowrap px-4 py-4 text-sm text-zinc-700 dark:text-zinc-300" x-text="formatDate(log.created_at)"></td>
                                     <td class="whitespace-nowrap px-4 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100" x-text="formatLabel(log.transport_type)"></td>
                                     <td class="whitespace-nowrap px-4 py-4 text-sm text-zinc-700 dark:text-zinc-300" x-text="`${log.distance} km`"></td>
@@ -112,7 +112,7 @@
                 </div>
             </div>
 
-            <div class="border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-900/40 dark:bg-zinc-900" style="border-radius: 0.30rem !important;">
+            <div class="eco-page-card eco-page-card--teal border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-900/40 dark:bg-zinc-900" style="border-radius: 0.30rem !important;">
                 <div class="mb-4 flex items-center justify-between gap-4">
                     <div>
                         <p class="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700">Emission Trend</p>
@@ -478,7 +478,7 @@
                     meat: 'Meat-heavy',
                     average: 'Average',
                     vegetarian: 'Vegetarian',
-                    vegan: 'Vegan',
+                    plant_based: 'Plant-based',
                 };
 
                 return labels[value] ?? this.formatLabel(value);

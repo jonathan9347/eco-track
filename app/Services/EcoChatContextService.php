@@ -23,7 +23,7 @@ class EcoChatContextService
             '- AI Predictions: forecasts based on recorded carbon logs and shows recommendations tied to saved data.',
             '- Classroom Leaderboard: compares students and classrooms by emissions.',
             '- Achievements: progress and challenge tracking based on user activity.',
-            '- Carbon calculation factors in this app: car 0.20 kg/km, bus 0.12 kg/km, jeepney 0.15 kg/km, tricycle 0.10 kg/km, walking 0.00 kg/km, gadget use 0.05 kg/hour, diet factors meat 5.0 kg, average 3.5 kg, vegetarian 2.0 kg, vegan 1.5 kg.',
+            '- Carbon calculation factors in this app: car 0.20 kg/km, bus 0.12 kg/km, jeepney 0.15 kg/km, tricycle 0.10 kg/km, walking 0.00 kg/km, gadget use 0.05 kg/hour, diet factors meat 5.0 kg, average 3.5 kg, vegetarian 2.0 kg, plant-based 1.5 kg.',
         ]);
 
         if ($logs === []) {

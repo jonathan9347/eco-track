@@ -37,7 +37,7 @@ return [
         'meat' => 'meat',
         'average' => 'average',
         'vegetarian' => 'vegetables',
-        'vegan' => 'vegan',
+        'plant_based' => 'plant based',
     ],
 
     'fallback' => [
@@ -52,7 +52,7 @@ return [
             'meat' => 5.0,
             'average' => 3.5,
             'vegetarian' => 2.0,
-            'vegan' => 1.5,
+            'plant_based' => 1.5,
         ],
         'gadgets' => [
             'per_hour' => 0.05,

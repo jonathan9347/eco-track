@@ -27,7 +27,7 @@
     x-effect="stickToBottom()"
     class="w-full"
 >
-    <section class="min-h-[78vh] overflow-hidden rounded-[0.35rem] border border-zinc-200 bg-[linear-gradient(180deg,#fdfefb_0%,#f6faf4_100%)] shadow-sm dark:border-zinc-800 dark:bg-[linear-gradient(180deg,#101512_0%,#0d120f_100%)]">
+    <section class="min-h-[78vh] overflow-hidden rounded-[0.35rem] border border-emerald-200 bg-[linear-gradient(180deg,#effef6_0%,#d9fbe8_58%,#fef3c7_100%)] shadow-sm dark:border-emerald-900/40 dark:bg-[linear-gradient(180deg,#0b2418_0%,#123823_62%,#3a2a0f_100%)]">
         <div class="flex justify-end px-1 py-2">
             <button
                 type="button"
@@ -52,7 +52,7 @@
                             <button
                                 type="button"
                                 wire:click="usePrompt(@js($prompt))"
-                                class="rounded-[0.35rem] border border-zinc-200 bg-white px-5 py-5 text-left text-sm text-zinc-700 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:border-emerald-800 dark:hover:bg-emerald-950/20 dark:hover:text-zinc-100"
+                                class="eco-page-card eco-page-card--teal rounded-[0.35rem] border border-zinc-200 bg-white px-5 py-5 text-left text-sm text-zinc-700 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:border-emerald-800 dark:hover:bg-emerald-950/20 dark:hover:text-zinc-100"
                             >
                                 {{ $prompt }}
                             </button>
@@ -71,7 +71,7 @@
                                     @endif
                                 </div>
 
-                                <div class="rounded-[0.35rem] px-5 py-4 text-sm leading-7 shadow-sm sm:text-[15px] {{ $message['role'] === 'user' ? 'bg-emerald-600 text-white shadow-[0_18px_40px_-20px_rgba(5,150,105,0.65)]' : 'border border-zinc-200 bg-white text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200' }}">
+                                <div class="rounded-[0.35rem] px-5 py-4 text-sm leading-7 shadow-sm sm:text-[15px] {{ $message['role'] === 'user' ? 'bg-emerald-600 text-white shadow-[0_18px_40px_-20px_rgba(5,150,105,0.65)]' : 'eco-page-card eco-page-card--emerald border border-zinc-200 bg-white text-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-200' }}">
                                     {!! nl2br(e($message['content'])) !!}
                                 </div>
                             </div>

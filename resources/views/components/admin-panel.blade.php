@@ -117,9 +117,9 @@
                 <div class="bg-emerald-50 p-5 ring-1 ring-emerald-100 dark:bg-emerald-950/20 dark:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
                     <h3 class="text-lg font-bold text-zinc-900 dark:text-zinc-100">Diet</h3>
                     <div class="mt-4 grid gap-3">
-                        @foreach (['meat', 'average', 'vegetarian', 'vegan'] as $key)
+                        @foreach (['meat', 'average', 'vegetarian', 'plant_based'] as $key)
                             <label class="grid gap-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                                <span>{{ ucfirst($key) }}</span>
+                                <span>{{ $key === 'plant_based' ? 'Plant-based' : ucfirst($key) }}</span>
                                 <input wire:model="factorForm.diet.{{ $key }}" type="number" step="0.01" min="0" class="border border-zinc-200 px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:shadow-none dark:focus:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
                             </label>
                             <p class="text-xs text-zinc-500 dark:text-zinc-400">
@@ -228,7 +228,7 @@
                     <div class="grid gap-4 sm:grid-cols-3">
                         <select wire:model="challengeForm.metric" class="border border-zinc-200 px-3 py-2 text-sm text-zinc-900 shadow-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:shadow-none dark:focus:ring-emerald-900/40" style="border-radius: 0.35rem !important;">
                             <option value="walking_days">Walking Days</option>
-                            <option value="vegan_meals">Vegan Meals</option>
+                            <option value="plant_based_meals">Plant-based Meals</option>
                             <option value="energy_saver_days">Energy Saver Days</option>
                             <option value="co2_saved">CO2 Saved</option>
                             <option value="streak_days">Streak Days</option>

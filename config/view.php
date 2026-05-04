@@ -5,6 +5,5 @@ return [
         resource_path('views'),
     ],
 
-    'compiled' => null,
-    // Add this to ensure the directory exists
+    'compiled' => storage_path('framework/views'),
 ];

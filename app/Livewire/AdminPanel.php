@@ -38,7 +38,7 @@ class AdminPanel extends Component
 
         $this->factorForm = [
             'transport' => ['jeepney' => 0.15, 'bus' => 0.12, 'tricycle' => 0.10, 'car' => 0.20, 'walking' => 0.00],
-            'diet' => ['meat' => 5.0, 'average' => 3.5, 'vegetarian' => 2.0, 'vegan' => 1.5],
+            'diet' => ['meat' => 5.0, 'average' => 3.5, 'vegetarian' => 2.0, 'plant_based' => 1.5],
             'gadgets' => ['per_hour' => 0.05],
         ];
 
@@ -73,7 +73,7 @@ class AdminPanel extends Component
             'diet.meat' => ['required', 'numeric', 'min:0'],
             'diet.average' => ['required', 'numeric', 'min:0'],
             'diet.vegetarian' => ['required', 'numeric', 'min:0'],
-            'diet.vegan' => ['required', 'numeric', 'min:0'],
+            'diet.plant_based' => ['required', 'numeric', 'min:0'],
             'gadgets.per_hour' => ['required', 'numeric', 'min:0'],
         ])->validate();
 

@@ -21,7 +21,7 @@ class CarbonCalculator extends Component
         ['value' => 'meat', 'label' => 'Meat-heavy'],
         ['value' => 'average', 'label' => 'Average'],
         ['value' => 'vegetarian', 'label' => 'Vegetarian'],
-        ['value' => 'vegan', 'label' => 'Vegan'],
+        ['value' => 'plant_based', 'label' => 'Plant-based'],
     ];
 
     public function mount(): void

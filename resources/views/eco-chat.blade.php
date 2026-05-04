@@ -7,7 +7,7 @@
         }
     </style>
 
-    <div class="eco-chat-page">
+    <div class="eco-chat-page eco-page-palette">
         <livewire:eco-chat />
     </div>
 

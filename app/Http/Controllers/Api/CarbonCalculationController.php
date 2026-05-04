@@ -210,7 +210,7 @@ class CarbonCalculationController extends Controller
         return [
             'transport_type' => ['required', 'string', 'in:jeepney,bus,tricycle,car,walking'],
             'distance' => ['required', 'numeric', 'min:0'],
-            'diet_type' => ['required', 'string', 'in:meat,average,vegetarian,vegan'],
+            'diet_type' => ['required', 'string', 'in:meat,average,vegetarian,plant_based'],
             'gadget_hours' => ['required', 'numeric', 'min:0'],
             'gadget_type' => ['nullable', 'string', 'in:laptop,smartphone,tablet,desktop_pc,monitor'],
         ];

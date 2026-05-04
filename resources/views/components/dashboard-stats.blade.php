@@ -83,9 +83,10 @@
 
         .dashboard-overview-card {
             overflow: hidden;
-            border: 1px solid rgba(120, 157, 112, 0.18);
+            border: 1px solid #84e9af;
             border-radius: 0.35rem;
-            background: linear-gradient(180deg, #fffdf8 0%, #ffffff 100%);
+            background: #d9fbe8;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52);
         }
 
         .dashboard-overview-card__inner {
@@ -104,14 +105,14 @@
 
         .dashboard-overview-card__title {
             margin: 0;
-            color: #1f2f20;
+            color: #0b2418;
             font-size: 1.15rem;
             font-weight: 800;
             letter-spacing: -0.035em;
         }
 
         .dashboard-overview-card__period {
-            color: #6b816d;
+            color: #195a37;
             font-size: 0.84rem;
             font-weight: 700;
             white-space: nowrap;
@@ -135,8 +136,9 @@
             width: 7.4rem;
             height: 7.4rem;
             border-radius: 999px;
-            background: conic-gradient(#4f8a58 0 var(--progress-angle), #e8e2d6 var(--progress-angle) 360deg);
+            background: conic-gradient(#1f8f4f 0 var(--progress-angle), rgba(255, 255, 255, 0.58) var(--progress-angle) 360deg);
             margin-inline: auto;
+            box-shadow: 0 14px 24px rgba(31, 143, 79, 0.18);
         }
 
         .dashboard-ring::after {
@@ -144,7 +146,7 @@
             position: absolute;
             inset: 0.72rem;
             border-radius: 999px;
-            background: #fffdf8;
+            background: #effef6;
         }
 
         .dashboard-ring__content {
@@ -158,7 +160,7 @@
         }
 
         .dashboard-ring__value {
-            color: #202f22;
+            color: #0b2418;
             font-size: 2rem;
             font-weight: 800;
             line-height: 1;
@@ -166,7 +168,7 @@
         }
 
         .dashboard-ring__label {
-            color: #657462;
+            color: #195a37;
             font-size: 0.82rem;
             font-weight: 700;
             line-height: 1.2;
@@ -181,7 +183,7 @@
         }
 
         .dashboard-overview-metric__value {
-            color: #4b8b56;
+            color: #1b7141;
             font-size: 2.6rem;
             font-weight: 800;
             line-height: 1;
@@ -195,8 +197,9 @@
             width: 2.25rem;
             height: 2.25rem;
             border-radius: 0.7rem;
-            background: #e7f2e5;
-            color: #4b8b56;
+            background: #1f8f4f;
+            color: #f4fff8;
+            box-shadow: 0 10px 18px rgba(31, 143, 79, 0.2);
         }
 
         .dashboard-mini-grid {
@@ -206,10 +209,26 @@
 
         .dashboard-mini-card {
             overflow: hidden;
-            border: 1px solid rgba(120, 157, 112, 0.18);
+            border: 1px solid #84e9af;
             border-radius: 0.35rem;
-            background: linear-gradient(180deg, #ffffff 0%, #fefcf7 100%);
+            background: #effef6;
             padding: 1.15rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52);
+        }
+
+        .dashboard-mini-grid .dashboard-mini-card:nth-child(1) {
+            border-color: #fde68a;
+            background: #fef3c7;
+        }
+
+        .dashboard-mini-grid .dashboard-mini-card:nth-child(2) {
+            border-color: #bef264;
+            background: #ecfccb;
+        }
+
+        .dashboard-side-grid > .dashboard-mini-card {
+            border-color: #99f6e4;
+            background: #ccfbf1;
         }
 
         .dashboard-mini-card__title {
@@ -250,8 +269,8 @@
             width: 2rem;
             height: 2rem;
             border-radius: 999px;
-            background: #ecf3e5;
-            color: #3f6d43;
+            background: rgba(255, 255, 255, 0.68);
+            color: #1b7141;
             font-size: 0.8rem;
             font-weight: 800;
         }
@@ -272,7 +291,7 @@
         }
 
         .dashboard-goal-icon.is-active {
-            background: #2d6138;
+            background: #1f8f4f;
             color: #f8fff4;
         }
 
@@ -320,7 +339,7 @@
             overflow: hidden;
             height: 0.45rem;
             border-radius: 999px;
-            background: #ece6da;
+            background: rgba(255, 255, 255, 0.62);
             margin-top: 0.35rem;
         }
 
@@ -328,44 +347,73 @@
             display: block;
             height: 100%;
             border-radius: inherit;
-            background: linear-gradient(90deg, #709b69 0%, #3f6f4d 100%);
+            background: linear-gradient(90deg, #14b8a6 0%, #28b463 100%);
         }
 
-        .dark .dashboard-overview-card,
         .dark .dashboard-mini-card {
             border-color: rgba(130, 170, 123, 0.14);
             background: linear-gradient(180deg, #121813 0%, #101511 100%);
         }
 
-        .dark .dashboard-overview-card__title,
-        .dark .dashboard-ring__value,
+        .dark .dashboard-mini-grid .dashboard-mini-card:nth-child(1) {
+            border-color: rgba(253, 230, 138, 0.26);
+            background: #3a2a0f;
+        }
+
+        .dark .dashboard-mini-grid .dashboard-mini-card:nth-child(2) {
+            border-color: rgba(190, 242, 100, 0.28);
+            background: #26380f;
+        }
+
+        .dark .dashboard-side-grid > .dashboard-mini-card {
+            border-color: rgba(153, 246, 228, 0.24);
+            background: #123538;
+        }
+
+        .dark .dashboard-overview-card {
+            border-color: rgba(132, 233, 175, 0.26);
+            background: #123823;
+        }
+
         .dark .dashboard-mini-card__title,
         .dark .dashboard-activity-label,
         .dark .dashboard-goal-label,
-        .dark .dashboard-overview-metric__value,
         .dark .dashboard-breakdown-inline__row {
             color: #eef4eb;
         }
 
-        .dark .dashboard-overview-card__period,
-        .dark .dashboard-ring__label,
+        .dark .dashboard-overview-card__title,
+        .dark .dashboard-ring__value,
+        .dark .dashboard-overview-metric__value {
+            color: #f4fff8;
+        }
+
         .dark .dashboard-mini-card__subtitle,
         .dark .dashboard-activity-meta {
             color: #9cad9a;
         }
 
+        .dark .dashboard-overview-card__period,
+        .dark .dashboard-ring__label {
+            color: #b5f4d0;
+        }
+
         .dark .dashboard-ring {
-            background: conic-gradient(#70a871 0 var(--progress-angle), #334033 var(--progress-angle) 360deg);
+            background: conic-gradient(#84e9af 0 var(--progress-angle), rgba(255, 255, 255, 0.14) var(--progress-angle) 360deg);
         }
 
         .dark .dashboard-ring::after {
-            background: #121813;
+            background: #0b2418;
         }
 
-        .dark .dashboard-overview-metric__badge,
         .dark .dashboard-activity-icon {
             background: #1d2a1f;
             color: #b3d0ad;
+        }
+
+        .dark .dashboard-overview-metric__badge {
+            background: #84e9af;
+            color: #0b2418;
         }
 
         .dark .dashboard-goal-icon.is-active {

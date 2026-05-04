@@ -1,4 +1,4 @@
-<div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
+<div class="eco-page-card eco-page-card--soft-blue rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-800">
     <div class="mb-6 flex items-center justify-between">
         <div>
             <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">AI Predictions</h3>
@@ -16,7 +16,7 @@
             <div class="h-8 w-8 animate-spin rounded-full border-4 border-zinc-200 border-t-emerald-500"></div>
         </div>
     @elseif($noData)
-        <div class="rounded-lg bg-zinc-50 p-6 text-center dark:bg-zinc-700/50">
+        <div class="eco-page-soft rounded-lg bg-zinc-50 p-6 text-center dark:bg-zinc-700/50">
             <svg class="mx-auto h-12 w-12 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
@@ -28,20 +28,20 @@
         </div>
     @elseif($prediction)
         <div class="mb-6 grid gap-4 md:grid-cols-4">
-            <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
+            <div class="eco-page-card eco-page-card--teal rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
                 <p class="text-sm text-zinc-500">Predicted Tomorrow</p>
                 <p class="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">{{ number_format($prediction['predicted_emission'], 2) }} kg CO2</p>
             </div>
-            <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
+            <div class="eco-page-card eco-page-card--lime rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
                 <p class="text-sm text-zinc-500">Today Logged</p>
                 <p class="mt-1 text-2xl font-bold text-zinc-900 dark:text-white">{{ number_format($todayEmission, 2) }} kg CO2</p>
             </div>
-            <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
+            <div class="eco-page-card eco-page-card--amber rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
                 <p class="text-sm text-zinc-500">Recent Trend</p>
                 <p class="mt-1 text-2xl font-bold {{ $this->trendColor() }}">{{ $this->trendIcon() }} {{ number_format(abs($prediction['trend']), 1) }}%</p>
                 <p class="mt-1 text-xs text-zinc-500">Compared with the previous 3 logged days</p>
             </div>
-            <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
+            <div class="eco-page-card eco-page-card--soft-slate rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
                 <p class="text-sm text-zinc-500">Confidence</p>
                 <div class="mt-2 flex items-center gap-2">
                     <div class="h-3 w-16 overflow-hidden rounded-full bg-zinc-200">
@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <div class="mb-6 rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
+        <div class="eco-page-card eco-page-card--teal mb-6 rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
             <p class="text-sm font-medium text-zinc-500">Forecast Basis</p>
             @php($changeDirection = $prediction['change_from_latest'] > 0 ? 'higher' : ($prediction['change_from_latest'] < 0 ? 'lower' : 'the same'))
             <p class="mt-2 text-sm text-zinc-700 dark:text-zinc-300">
@@ -71,7 +71,7 @@
 
         @if($sparkline)
             @php($maxValue = max(max($sparkline['values']), 1))
-            <div class="mb-6 rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
+            <div class="eco-page-card eco-page-card--lime mb-6 rounded-lg bg-zinc-50 p-4 dark:bg-zinc-700/50">
                 <p class="mb-3 text-sm font-medium text-zinc-500">Last 7 Days and Forecast</p>
                 <div class="flex items-end justify-between gap-1" style="height: 80px;">
                     @foreach($sparkline['values'] as $index => $value)
@@ -89,7 +89,7 @@
                 <p class="mb-3 text-sm font-medium text-zinc-500">Data-Backed Recommendations</p>
                 <div class="space-y-3">
                     @foreach($recommendations as $rec)
-                        <div class="flex items-start gap-3 rounded-lg border border-zinc-100 p-3 dark:border-zinc-700">
+                        <div class="eco-page-soft flex items-start gap-3 rounded-lg border border-zinc-100 p-3 dark:border-zinc-700">
                             <div class="flex-shrink-0 rounded-full p-2 {{ $this->difficultyColor($rec['difficulty']) }}">
                                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>

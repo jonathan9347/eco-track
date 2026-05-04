@@ -1,6 +1,6 @@
 <x-layouts::app :title="__('Eco Tips')">
-    <div class="space-y-8">
-        <section class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div class="eco-page-palette space-y-8">
+        <section class="eco-page-hero eco-page-hero--subtle flex flex-col gap-4 px-6 py-7 sm:flex-row sm:items-end sm:justify-between">
             <div class="min-w-0">
                 <p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-700">Resources</p>
                 <h1 class="mt-1 text-2xl font-black text-zinc-900 dark:text-zinc-100 sm:text-3xl">Eco Tips</h1>
@@ -9,14 +9,14 @@
                 </p>
             </div>
 
-            <div class="rounded-xl border border-emerald-100 bg-white px-4 py-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+            <div class="eco-page-card eco-page-card--amber rounded-xl border border-emerald-100 bg-white px-4 py-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Purpose</p>
                 <p class="mt-2 max-w-xs text-sm text-zinc-600 dark:text-zinc-400">Learn the basics, connect them to your habits, and use Eco Track as a small action tool for climate awareness.</p>
             </div>
         </section>
 
         <section class="grid gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(280px,0.9fr)]">
-            <article class="rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
+            <article class="eco-page-card eco-page-card--emerald rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Climate Basics</p>
                 <h2 class="mt-2 text-xl font-bold text-zinc-900">What climate change means</h2>
                 <div class="mt-4 space-y-4 text-sm leading-7 text-zinc-600">
@@ -39,9 +39,12 @@
                         alt="Climate change illustration"
                         class="h-[220px] w-full object-cover"
                     >
+                    <p class="bg-white/85 px-4 py-2 text-xs font-medium text-zinc-500 dark:bg-zinc-950/80 dark:text-zinc-400">
+                        Image credit: Pinterest
+                    </p>
                 </div>
 
-                <article class="rounded-[1.2rem] border border-zinc-200 bg-white p-5 shadow-sm">
+                <article class="eco-page-card eco-page-card--teal rounded-[1.2rem] border border-zinc-200 bg-white p-5 shadow-sm">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Key Effects</p>
                     <ul class="mt-3 space-y-3 text-sm leading-6 text-zinc-600">
                         <li>Hotter days and longer heat periods</li>
@@ -54,21 +57,21 @@
         </section>
 
         <section class="grid gap-4 lg:grid-cols-3">
-            <article class="rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
+            <article class="eco-page-card eco-page-card--emerald rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Transport</p>
                 <p class="mt-3 text-sm leading-6 text-zinc-600">
                     Cars and fuel-based travel contribute to greenhouse gas emissions. Walking, shared transport, and shorter trips can reduce the impact of daily movement.
                 </p>
             </article>
 
-            <article class="rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
+            <article class="eco-page-card eco-page-card--lime rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Food</p>
                 <p class="mt-3 text-sm leading-6 text-zinc-600">
                     Food systems affect land use, water, transport, and emissions. More balanced and lower-emission food choices can reduce pressure on the climate.
                 </p>
             </article>
 
-            <article class="rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
+            <article class="eco-page-card eco-page-card--amber rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Energy Use</p>
                 <p class="mt-3 text-sm leading-6 text-zinc-600">
                     Device use and electricity demand also matter. Saving power, reducing unnecessary screen time, and turning off idle devices are small but meaningful habits.
@@ -77,7 +80,7 @@
         </section>
 
         <section class="grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-            <article class="rounded-[1.2rem] border border-emerald-100 bg-white p-6 shadow-sm">
+            <article class="eco-page-card eco-page-card--emerald rounded-[1.2rem] border border-emerald-100 bg-white p-6 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">SDG 13</p>
                 <h2 class="mt-2 text-xl font-bold text-zinc-900">Climate Action</h2>
                 <div class="mt-4 space-y-4 text-sm leading-7 text-zinc-600">
@@ -100,9 +103,12 @@
                         alt="SDG 13 Climate Action"
                         class="h-[200px] w-full object-cover"
                     >
+                    <p class="bg-white/85 px-4 py-2 text-xs font-medium text-zinc-500 dark:bg-zinc-950/80 dark:text-zinc-400">
+                        Image credit: Pinterest
+                    </p>
                 </div>
 
-                <article class="rounded-[1.2rem] border border-zinc-200 bg-white p-5 shadow-sm">
+                <article class="eco-page-card eco-page-card--lime rounded-[1.2rem] border border-zinc-200 bg-white p-5 shadow-sm">
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Eco Track And SDG 13</p>
                     <ul class="mt-3 space-y-3 text-sm leading-6 text-zinc-600">
                         <li>Improves awareness through visible carbon logs</li>
@@ -114,7 +120,7 @@
             </div>
         </section>
 
-        <section class="rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
+        <section class="eco-page-card eco-page-card--teal rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Action Guide</p>
@@ -124,22 +130,22 @@
             </div>
 
             <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <article class="rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
+                <article class="eco-page-soft rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
                     <p class="text-sm font-semibold text-zinc-900">Choose lower-emission transport</p>
                     <p class="mt-2 text-sm leading-6 text-zinc-600">Walk when possible, combine errands, or use shared transport for routine trips.</p>
                 </article>
 
-                <article class="rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
+                <article class="eco-page-soft rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
                     <p class="text-sm font-semibold text-zinc-900">Be mindful of food choices</p>
                     <p class="mt-2 text-sm leading-6 text-zinc-600">Try lower-emission meals more often and avoid unnecessary food waste.</p>
                 </article>
 
-                <article class="rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
+                <article class="eco-page-soft rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
                     <p class="text-sm font-semibold text-zinc-900">Reduce unnecessary electricity use</p>
                     <p class="mt-2 text-sm leading-6 text-zinc-600">Switch off devices when idle and avoid leaving gadgets running without need.</p>
                 </article>
 
-                <article class="rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
+                <article class="eco-page-soft rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
                     <p class="text-sm font-semibold text-zinc-900">Track and improve consistently</p>
                     <p class="mt-2 text-sm leading-6 text-zinc-600">Use your logs and predictions as feedback so small changes become visible over time.</p>
                 </article>

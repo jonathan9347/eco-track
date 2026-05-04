@@ -25,6 +25,12 @@ foreach ([
 putenv("TMPDIR=$tempDir");
 putenv("TEMP=$tempDir");
 putenv("TMP=$tempDir");
+putenv("APP_SERVICES_CACHE=$tempDir/framework/cache/services.php");
+putenv("APP_PACKAGES_CACHE=$tempDir/framework/cache/packages.php");
+putenv("APP_CONFIG_CACHE=$tempDir/framework/cache/config.php");
+putenv("APP_ROUTES_CACHE=$tempDir/framework/cache/routes.php");
+putenv("APP_EVENTS_CACHE=$tempDir/framework/cache/events.php");
+putenv("VIEW_COMPILED_PATH=$tempDir/framework/views");
 
 // Load Composer autoloader
 $composerAutoload = __DIR__ . '/../vendor/autoload.php';

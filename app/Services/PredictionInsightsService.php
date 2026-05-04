@@ -19,7 +19,7 @@ class PredictionInsightsService
         'meat' => 5.0,
         'average' => 3.5,
         'vegetarian' => 2.0,
-        'vegan' => 1.5,
+        'plant_based' => 1.5,
     ];
 
     public function __construct(
@@ -423,8 +423,8 @@ class PredictionInsightsService
         $target = match ($name) {
             'meat' => 'vegetarian',
             'average' => 'vegetarian',
-            'vegetarian' => 'vegan',
-            'vegan' => null,
+            'vegetarian' => 'plant_based',
+            'plant_based' => null,
             default => null,
         };
 
@@ -571,7 +571,7 @@ class PredictionInsightsService
             'meat' => 'meat-based',
             'average' => 'average',
             'vegetarian' => 'vegetarian',
-            'vegan' => 'vegan',
+            'plant_based' => 'plant-based',
             default => 'lower-carbon',
         };
     }

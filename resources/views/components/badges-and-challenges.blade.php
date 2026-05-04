@@ -1,4 +1,4 @@
-<section class="w-full px-2 py-2">
+<section class="eco-page-palette w-full px-2 py-2">
     <style>
         @keyframes badge-pop {
             0% {
@@ -8,12 +8,10 @@
 
             60% {
                 transform: scale(1.03);
-                box-shadow: 0 20px 40px rgba(16, 185, 129, 0.18);
             }
 
             100% {
                 transform: scale(1);
-                box-shadow: 0 18px 36px rgba(16, 185, 129, 0.12);
             }
         }
 
@@ -75,7 +73,7 @@
                         <summary class="cursor-pointer focus:outline-none">
                             <div class="achievement-flip-card__inner">
                             <div
-                                class="achievement-flip-card__face border border-emerald-200 bg-[#dff5df] p-6 dark:border-emerald-900/40 dark:bg-[#214232]"
+                                class="achievement-flip-card__face eco-page-card {{ $badge['front_class'] ?? 'eco-page-card--emerald' }} border border-emerald-200 p-6 dark:border-emerald-900/40"
                                 style="border-radius: 0.35rem !important;"
                             >
                                 <div class="flex items-start justify-between gap-4">
@@ -109,7 +107,7 @@
                             </div>
 
                             <div
-                                class="achievement-flip-card__face achievement-flip-card__back border border-teal-200 bg-[#d8f3ec] p-6 dark:border-teal-900/40 dark:bg-[#1d3b3d]"
+                                class="achievement-flip-card__face achievement-flip-card__back eco-page-card eco-page-card--soft-blue border border-sky-200 p-6 dark:border-sky-900/40"
                                 style="border-radius: 0.35rem !important;"
                             >
                                 <div class="flex h-full flex-col justify-between">

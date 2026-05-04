@@ -69,6 +69,7 @@ class BadgesAndChallenges extends Component
                         ?? $data['device_hours']
                         ?? 0
                 ),
+                'diet_type' => $this->normalizeDietType($data['diet_type'] ?? null),
                 'total_emission' => $this->normalizeNumber($data['total_emission'] ?? 0),
                 'created_at' => $createdAt,
                 'log_date' => $createdAt?->format('Y-m-d'),
@@ -98,6 +99,20 @@ class BadgesAndChallenges extends Component
             ->unique()
             ->count();
 
+        $plantPoweredDays = $logs
+            ->filter(fn (array $log) => in_array($log['diet_type'] ?? '', ['vegetarian', 'plant_based'], true))
+            ->pluck('log_date')
+            ->filter()
+            ->unique()
+            ->count();
+
+        $lowCarbonDays = $logs
+            ->filter(fn (array $log) => ($log['total_emission'] ?? 0) > 0 && ($log['total_emission'] ?? 0) <= 3)
+            ->pluck('log_date')
+            ->filter()
+            ->unique()
+            ->count();
+
         $totalLogs = $logs->count();
         $streak = $this->calculateLongestStreak($logDates);
 
@@ -109,7 +124,8 @@ class BadgesAndChallenges extends Component
                 5,
                 'days',
                 'Walk instead of using a vehicle on five separate days, then save each carbon log so the system can count your progress.',
-                'M7 14c2.2 0 4-1.8 4-4S9.2 6 7 6 3 7.8 3 10s1.8 4 4 4Zm10 1c1.66 0 3 1.34 3 3v2h-2v-2a1 1 0 0 0-2 0v2h-2v-2c0-1.66 1.34-3 3-3ZM9 19l1.4-5.2 2.4 1.8V22h-2v-4.5L9.6 16 8 22H6l2.1-7.6A2 2 0 0 1 10 13h1.2l2.3 1.7'
+                'M7 14c2.2 0 4-1.8 4-4S9.2 6 7 6 3 7.8 3 10s1.8 4 4 4Zm10 1c1.66 0 3 1.34 3 3v2h-2v-2a1 1 0 0 0-2 0v2h-2v-2c0-1.66 1.34-3 3-3ZM9 19l1.4-5.2 2.4 1.8V22h-2v-4.5L9.6 16 8 22H6l2.1-7.6A2 2 0 0 1 10 13h1.2l2.3 1.7',
+                'eco-page-card--emerald'
             ),
             $this->makeBadge(
                 'Energy Saver',
@@ -118,7 +134,8 @@ class BadgesAndChallenges extends Component
                 7,
                 'days',
                 'Log seven days where your gadget use stays under two hours. Shorter screen time entries will push this badge forward.',
-                'M12 2 4 14h6l-1 8 8-12h-6l1-8Z'
+                'M12 2 4 14h6l-1 8 8-12h-6l1-8Z',
+                'eco-page-card--amber'
             ),
             $this->makeBadge(
                 'Carbon Tracker',
@@ -127,7 +144,28 @@ class BadgesAndChallenges extends Component
                 20,
                 'logs',
                 'Keep adding your daily transport, diet, and gadget entries until you reach twenty saved carbon logs.',
-                'M7 3h8l5 5v13a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5M9 13h6M9 17h6'
+                'M7 3h8l5 5v13a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm7 1.5V9h4.5M9 13h6M9 17h6',
+                'eco-page-card--teal'
+            ),
+            $this->makeBadge(
+                'Plant Powered',
+                'Choose vegetarian or plant-based meals on 6 different days.',
+                $plantPoweredDays,
+                6,
+                'days',
+                'Select vegetarian or plant-based as your diet type on six separate saved logs to show consistent lower-impact meal choices.',
+                'M19 4c-4.2.2-7 1.8-8.5 4.7-1.1 2.1-1.1 4.3-.7 5.4 1.2.1 3.4-.1 5.5-1.4C18.1 11 19.4 8 19 4ZM5 5c2.8.3 4.7 1.4 5.7 3.4.7 1.3.7 2.7.4 3.5-.9.1-2.3-.1-3.6-1C5.6 9.7 4.7 7.6 5 5Zm4 13c2.8-4.2 5.7-6.8 9-8',
+                'eco-page-card--lime'
+            ),
+            $this->makeBadge(
+                'Low Carbon Day',
+                'Keep total emissions at 3 kg CO2e or lower for 5 days.',
+                $lowCarbonDays,
+                5,
+                'days',
+                'Save five daily logs with a total footprint of 3 kg CO2e or less. Balanced transport, meals, and gadget use all help this badge progress.',
+                'M12 3 5 7v5c0 4.4 3.1 7.7 7 9 3.9-1.3 7-4.6 7-9V7l-7-4Zm-3 9 2 2 4-5',
+                'eco-page-card--soft-blue'
             ),
             $this->makeBadge(
                 'Streak Master',
@@ -136,7 +174,8 @@ class BadgesAndChallenges extends Component
                 30,
                 'days',
                 'Submit at least one carbon log every day for thirty straight days. Missing a day resets the streak count.',
-                'M12 3 4 7v6c0 4.42 3.58 8 8 8s8-3.58 8-8V7l-8-4Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z'
+                'M12 3 4 7v6c0 4.42 3.58 8 8 8s8-3.58 8-8V7l-8-4Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z',
+                'eco-page-card--soft-slate'
             ),
         ];
     }
@@ -157,7 +196,8 @@ class BadgesAndChallenges extends Component
         float|int $target,
         string $suffix = 'days',
         string $instruction = '',
-        string $iconPath = ''
+        string $iconPath = '',
+        string $frontClass = 'eco-page-card--emerald'
     ): array {
         $progress = round((float) $progress, 2);
         $target = round((float) $target, 2);
@@ -173,6 +213,7 @@ class BadgesAndChallenges extends Component
             'suffix' => $suffix,
             'instruction' => $instruction,
             'icon_path' => $iconPath,
+            'front_class' => $frontClass,
         ];
     }
 
@@ -232,6 +273,11 @@ class BadgesAndChallenges extends Component
             'walk', 'walking', 'on foot' => 'walking',
             default => $transport,
         };
+    }
+
+    protected function normalizeDietType(mixed $value): string
+    {
+        return strtolower(trim((string) $value));
     }
 
     protected function normalizeNumber(mixed $value): float

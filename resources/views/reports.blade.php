@@ -1,6 +1,6 @@
 <x-layouts::app :title="__('Reports')">
-    <div class="space-y-8">
-        <section class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div class="eco-page-palette space-y-8">
+        <section class="eco-page-hero eco-page-hero--subtle flex flex-col gap-4 px-6 py-7 sm:flex-row sm:items-end sm:justify-between">
             <div class="min-w-0">
                 <p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-700">Resources</p>
                 <h1 class="mt-1 text-2xl font-black text-zinc-900 sm:text-3xl">Reports</h1>
@@ -26,25 +26,25 @@
         </section>
 
         <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <article class="rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
+            <article class="eco-page-card eco-page-card--emerald rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Saved Logs</p>
                 <p class="mt-3 text-3xl font-black text-zinc-900">{{ number_format($summary['log_count']) }}</p>
                 <p class="mt-2 text-sm text-zinc-600">Total records available in your current Eco Track history.</p>
             </article>
 
-            <article class="rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
+            <article class="eco-page-card eco-page-card--amber rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Total Emission</p>
                 <p class="mt-3 text-3xl font-black text-zinc-900">{{ number_format($summary['total_emission'], 2) }} kg</p>
                 <p class="mt-2 text-sm text-zinc-600">Combined emissions from all saved logs.</p>
             </article>
 
-            <article class="rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
+            <article class="eco-page-card eco-page-card--lime rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Average Per Log</p>
                 <p class="mt-3 text-3xl font-black text-zinc-900">{{ number_format($summary['average_emission'], 2) }} kg</p>
                 <p class="mt-2 text-sm text-zinc-600">Average emission value across your saved entries.</p>
             </article>
 
-            <article class="rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
+            <article class="eco-page-card eco-page-card--teal rounded-[1.1rem] border border-zinc-200 bg-white p-5 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Report Range</p>
                 <p class="mt-3 text-sm font-semibold text-zinc-900">
                     {{ $summary['first_log_date'] ? \Carbon\Carbon::parse($summary['first_log_date'])->format('M j, Y') : 'No data' }}
@@ -57,12 +57,12 @@
         </section>
 
         <section class="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.9fr)]">
-            <article class="rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
+            <article class="eco-page-card eco-page-card--emerald rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Emission Breakdown</p>
                 <h2 class="mt-2 text-xl font-bold text-zinc-900">Where your report comes from</h2>
 
                 <div class="mt-6 space-y-4">
-                    <div class="rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
+                    <div class="eco-page-soft rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
                         <div class="flex items-center justify-between gap-4">
                             <p class="text-sm font-semibold text-zinc-900">Transport</p>
                             <p class="text-sm font-bold text-zinc-900">{{ number_format($summary['transport_total'], 2) }} kg</p>
@@ -70,7 +70,7 @@
                         <p class="mt-2 text-sm text-zinc-600">Travel emissions based on recorded transport type and distance.</p>
                     </div>
 
-                    <div class="rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
+                    <div class="eco-page-soft rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
                         <div class="flex items-center justify-between gap-4">
                             <p class="text-sm font-semibold text-zinc-900">Diet</p>
                             <p class="text-sm font-bold text-zinc-900">{{ number_format($summary['diet_total'], 2) }} kg</p>
@@ -78,7 +78,7 @@
                         <p class="mt-2 text-sm text-zinc-600">Food-related emissions from the diet category recorded in your logs.</p>
                     </div>
 
-                    <div class="rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
+                    <div class="eco-page-soft rounded-[1rem] border border-zinc-200 bg-zinc-50 p-4">
                         <div class="flex items-center justify-between gap-4">
                             <p class="text-sm font-semibold text-zinc-900">Gadgets</p>
                             <p class="text-sm font-bold text-zinc-900">{{ number_format($summary['gadget_total'], 2) }} kg</p>
@@ -88,7 +88,7 @@
                 </div>
             </article>
 
-            <article class="rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
+            <article class="eco-page-card eco-page-card--amber rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
                 <p class="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Export Notes</p>
                 <ul class="mt-4 space-y-3 text-sm leading-6 text-zinc-600">
                     <li>CSV export is useful for spreadsheets and simple printed reporting.</li>
@@ -99,7 +99,7 @@
             </article>
         </section>
 
-        <section class="rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
+        <section class="eco-page-card eco-page-card--teal rounded-[1.2rem] border border-zinc-200 bg-white p-6 shadow-sm">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Monthly Summary</p>

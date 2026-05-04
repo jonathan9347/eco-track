@@ -2,7 +2,9 @@
 
 use App\Concerns\PasswordValidationRules;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Validation\ValidationException;
+use Laravel\Fortify\Actions\ConfirmPassword;
 use Laravel\Fortify\Actions\DisableTwoFactorAuthentication;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
@@ -16,12 +18,15 @@ new #[Title('Security settings')] class extends Component {
     public string $current_password = '';
     public string $password = '';
     public string $password_confirmation = '';
+    public string $confirming_password = '';
 
-    public bool $canManageTwoFactor;
+    public bool $canManageTwoFactor = false;
 
-    public bool $twoFactorEnabled;
+    public bool $twoFactorEnabled = false;
 
-    public bool $requiresConfirmation;
+    public bool $requiresConfirmation = false;
+
+    public bool $requiresPasswordConfirmation = false;
 
     /**
      * Mount the component.
@@ -29,7 +34,20 @@ new #[Title('Security settings')] class extends Component {
     public function mount(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
     {
         $this->canManageTwoFactor = Features::canManageTwoFactorAuthentication();
+        $this->requiresPasswordConfirmation = $this->pageRequiresPasswordConfirmation();
 
+        if ($this->requiresPasswordConfirmation) {
+            return;
+        }
+
+        $this->loadSecuritySettings($disableTwoFactorAuthentication);
+    }
+
+    /**
+     * Load the sensitive security settings after password confirmation.
+     */
+    private function loadSecuritySettings(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
+    {
         if ($this->canManageTwoFactor) {
             if (Fortify::confirmsTwoFactorAuthentication() && is_null(auth()->user()->two_factor_confirmed_at)) {
                 $disableTwoFactorAuthentication(auth()->user());
@@ -38,6 +56,30 @@ new #[Title('Security settings')] class extends Component {
             $this->twoFactorEnabled = auth()->user()->hasEnabledTwoFactorAuthentication();
             $this->requiresConfirmation = Features::optionEnabled(Features::twoFactorAuthentication(), 'confirm');
         }
+    }
+
+    /**
+     * Confirm the current user's password before showing sensitive settings.
+     */
+    public function confirmPassword(ConfirmPassword $confirmPassword): void
+    {
+        $confirmed = $confirmPassword(Auth::guard(), auth()->user(), $this->confirming_password);
+
+        if (! $confirmed) {
+            $this->reset('confirming_password');
+
+            throw ValidationException::withMessages([
+                'confirming_password' => __('The provided password was incorrect.'),
+            ]);
+        }
+
+        session()->put('auth.password_confirmed_at', Date::now()->unix());
+
+        $this->reset('confirming_password');
+
+        $this->requiresPasswordConfirmation = false;
+
+        $this->loadSecuritySettings(app(DisableTwoFactorAuthentication::class));
     }
 
     /**
@@ -83,6 +125,21 @@ new #[Title('Security settings')] class extends Component {
 
         $this->twoFactorEnabled = false;
     }
+
+    /**
+     * Determine whether the security page should ask for a recent password confirmation.
+     */
+    private function pageRequiresPasswordConfirmation(): bool
+    {
+        if (! Features::canManageTwoFactorAuthentication()
+            || ! Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword')) {
+            return false;
+        }
+
+        $confirmedAt = Date::now()->unix() - session()->get('auth.password_confirmed_at', 0);
+
+        return $confirmedAt > config('auth.password_timeout', 10800);
+    }
 }; ?>
 
 <section class="w-full">
@@ -90,6 +147,25 @@ new #[Title('Security settings')] class extends Component {
 
     <flux:heading class="sr-only">{{ __('Security settings') }}</flux:heading>
 
+    @if ($requiresPasswordConfirmation)
+        <x-pages::settings.layout :heading="__('Confirm password')" :subheading="__('This is a secure area of the application. Please confirm your password before continuing.')">
+            <form method="POST" wire:submit="confirmPassword" class="mt-6 space-y-6">
+                <flux:input
+                    wire:model="confirming_password"
+                    :label="__('Password')"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                    :placeholder="__('Password')"
+                    viewable
+                />
+
+                <flux:button variant="primary" type="submit" class="w-full" data-test="confirm-password-button">
+                    {{ __('Confirm') }}
+                </flux:button>
+            </form>
+        </x-pages::settings.layout>
+    @else
     <x-pages::settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
             <flux:input
@@ -175,4 +251,5 @@ new #[Title('Security settings')] class extends Component {
             </section>
         @endif
     </x-pages::settings.layout>
+    @endif
 </section>

@@ -72,9 +72,25 @@
                 display: grid;
                 gap: 0.75rem;
                 padding: 1rem;
-                border: 1px solid rgba(111, 149, 95, 0.12);
+                border: 1px solid rgba(111, 149, 95, 0.16);
                 border-radius: 0.35rem;
-                background: rgba(250, 251, 246, 0.92);
+                background: #effef6;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.54);
+            }
+
+            .cc-row--commute {
+                border-color: #84e9af;
+                background: #d9fbe8;
+            }
+
+            .cc-row--device {
+                border-color: #fde68a;
+                background: #fef3c7;
+            }
+
+            .cc-row--diet {
+                border-color: #bef264;
+                background: #ecfccb;
             }
 
             .cc-row__top {
@@ -91,8 +107,21 @@
                 width: 2.7rem;
                 height: 2.7rem;
                 border-radius: 999px;
-                background: #e2edd9;
-                color: #486847;
+                background: #1f8f4f;
+                color: #f4fff8;
+                box-shadow: 0 8px 18px rgba(31, 143, 79, 0.18);
+            }
+
+            .cc-row--device .cc-row__icon {
+                background: #f59e0b;
+                color: #422006;
+                box-shadow: 0 8px 18px rgba(245, 158, 11, 0.18);
+            }
+
+            .cc-row--diet .cc-row__icon {
+                background: #65a30d;
+                color: #f7fee7;
+                box-shadow: 0 8px 18px rgba(101, 163, 13, 0.18);
             }
 
             .cc-row__icon svg {
@@ -124,9 +153,9 @@
             .cc-input {
                 width: 100%;
                 min-height: 2.85rem;
-                border: 1px solid #d8dfd1;
+                border: 1px solid rgba(25, 90, 55, 0.2);
                 border-radius: 0.35rem;
-                background: #ffffff;
+                background: rgba(255, 255, 255, 0.82);
                 color: #223223;
                 font-size: 0.92rem;
                 padding: 0.7rem 0.85rem;
@@ -150,7 +179,7 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 0.75rem;
-                color: #62705e;
+                color: #34533a;
                 font-size: 0.78rem;
                 font-weight: 700;
             }
@@ -160,15 +189,23 @@
                 height: 0.42rem;
                 appearance: none;
                 border-radius: 999px;
-                background: linear-gradient(90deg, #7fab77 0%, #d9e3ce 100%);
+                background: #28b463;
                 outline: none;
+            }
+
+            .cc-row--device .cc-range {
+                background: #f59e0b;
+            }
+
+            .cc-row--diet .cc-range {
+                background: #84cc16;
             }
 
             .cc-range::-webkit-slider-thumb {
                 appearance: none;
                 width: 1.1rem;
                 height: 1.1rem;
-                border: 3px solid #6f955f;
+                border: 3px solid #1f8f4f;
                 border-radius: 999px;
                 background: #fffefb;
                 box-shadow: 0 4px 10px rgba(67, 99, 61, 0.16);
@@ -178,11 +215,27 @@
             .cc-range::-moz-range-thumb {
                 width: 1.1rem;
                 height: 1.1rem;
-                border: 3px solid #6f955f;
+                border: 3px solid #1f8f4f;
                 border-radius: 999px;
                 background: #fffefb;
                 box-shadow: 0 4px 10px rgba(67, 99, 61, 0.16);
                 cursor: pointer;
+            }
+
+            .cc-row--device .cc-range::-webkit-slider-thumb {
+                border-color: #d97706;
+            }
+
+            .cc-row--device .cc-range::-moz-range-thumb {
+                border-color: #d97706;
+            }
+
+            .cc-row--diet .cc-range::-webkit-slider-thumb {
+                border-color: #65a30d;
+            }
+
+            .cc-row--diet .cc-range::-moz-range-thumb {
+                border-color: #65a30d;
             }
 
             .cc-actions {
@@ -398,19 +451,47 @@
 
             .dark .cc-card__pill,
             .dark .cc-row {
-                background: rgba(20, 28, 22, 0.92);
                 border-color: rgba(129, 164, 123, 0.12);
             }
 
+            .dark .cc-card__pill {
+                background: rgba(20, 28, 22, 0.92);
+            }
+
+            .dark .cc-row--commute {
+                border-color: rgba(79, 211, 134, 0.35);
+                background: #123823;
+            }
+
+            .dark .cc-row--device {
+                border-color: rgba(245, 158, 11, 0.34);
+                background: #3a2a0f;
+            }
+
+            .dark .cc-row--diet {
+                border-color: rgba(132, 204, 22, 0.34);
+                background: #26380f;
+            }
+
             .dark .cc-row__icon {
-                background: #203126;
-                color: #afd29e;
+                background: #28b463;
+                color: #062015;
+            }
+
+            .dark .cc-row--device .cc-row__icon {
+                background: #f59e0b;
+                color: #1f1303;
+            }
+
+            .dark .cc-row--diet .cc-row__icon {
+                background: #84cc16;
+                color: #101d04;
             }
 
             .dark .cc-select,
             .dark .cc-input {
-                border-color: #2d3f31;
-                background: #121914;
+                border-color: rgba(255, 255, 255, 0.14);
+                background: rgba(8, 18, 12, 0.58);
                 color: #edf5ea;
             }
 
@@ -448,7 +529,7 @@
             </div>
 
             <form id="carbon-calculator-form" @submit.prevent="calculate" class="cc-form">
-                <div class="cc-row">
+                <div class="cc-row cc-row--commute">
                     <div class="cc-row__top">
                         <div class="cc-row__icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -495,7 +576,7 @@
                     </div>
                 </div>
 
-                <div class="cc-row">
+                <div class="cc-row cc-row--device">
                     <div class="cc-row__top">
                         <div class="cc-row__icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -542,7 +623,7 @@
                     </div>
                 </div>
 
-                <div class="cc-row">
+                <div class="cc-row cc-row--diet">
                     <div class="cc-row__top">
                         <div class="cc-row__icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

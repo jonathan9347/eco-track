@@ -5,7 +5,7 @@
     </head>
     <body class="min-h-screen bg-white text-zinc-900 transition-colors dark:bg-zinc-900 dark:text-zinc-100">
         @php
-            $activeSidebarStyle = 'background:#059669;color:#ffffff;border-radius:0.35rem;box-shadow:0 10px 18px rgba(5,150,105,0.18);';
+            $activeSidebarStyle = 'background:#24582f;color:#ffffff;border-radius:0.35rem;box-shadow:0 8px 16px rgba(36,88,47,0.22);';
         @endphp
         <flux:sidebar sticky collapsible="mobile" class="eco-sidebar bg-white dark:bg-zinc-950" style="display: flex; flex-direction: column; height: 100vh;">
             <flux:sidebar.nav class="mt-0 flex-1 space-y-4 px-1 pt-1 pb-2" style="min-height: 0;">
@@ -147,16 +147,16 @@
             }
 
             .eco-sidebar__info-box {
-                border: 1px solid rgba(16, 185, 129, 0.16);
+                border: 1px solid rgba(36, 88, 47, 0.2);
                 border-radius: 0.35rem;
-                background: #dff5df;
+                background: rgba(246, 255, 244, 0.42);
                 padding: 0.5rem;
-                box-shadow: 0 8px 16px rgba(16, 185, 129, 0.06);
+                box-shadow: none;
             }
 
             .eco-sidebar__info-kicker {
                 margin: 0;
-                color: #047857;
+                color: #164b24;
                 font-size: 0.6rem;
                 font-weight: 800;
                 letter-spacing: 0.1em;
@@ -165,7 +165,7 @@
 
             .eco-sidebar__info-title {
                 margin: 0.14rem 0 0;
-                color: #064e3b;
+                color: #12351d;
                 font-size: 0.78rem;
                 font-weight: 800;
                 line-height: 1.15;
@@ -173,7 +173,7 @@
 
             .eco-sidebar__info-copy {
                 margin: 0.14rem 0 0;
-                color: rgba(6, 78, 59, 0.86);
+                color: rgba(18, 53, 29, 0.86);
                 font-size: 0.68rem;
                 line-height: 1.2;
             }
@@ -185,7 +185,7 @@
                 margin-top: 0.38rem;
                 width: 100%;
                 border-radius: 0.35rem;
-                background: #059669;
+                background: #24582f;
                 padding: 0.36rem 0.55rem;
                 color: #ffffff;
                 font-size: 0.72rem;
@@ -195,34 +195,34 @@
             }
 
             .eco-sidebar__info-cta:hover {
-                background: #047857;
+                background: #1c4726;
             }
 
             .eco-sidebar {
                 border-right: 0 !important;
-                background: #ffffff !important;
+                background: #4f9259 !important;
             }
 
             .dark .eco-sidebar {
-                background: #09090b !important;
+                background: #4f9259 !important;
             }
 
             .dark .eco-sidebar__info-box {
-                border-color: rgba(52, 211, 153, 0.18);
-                background: #17352a;
+                border-color: rgba(36, 88, 47, 0.2);
+                background: rgba(246, 255, 244, 0.42);
                 box-shadow: none;
             }
 
             .dark .eco-sidebar__info-kicker {
-                color: #6ee7b7;
+                color: #164b24;
             }
 
             .dark .eco-sidebar__info-title {
-                color: #ecfdf5;
+                color: #12351d;
             }
 
             .dark .eco-sidebar__info-copy {
-                color: rgba(209, 250, 229, 0.82);
+                color: rgba(18, 53, 29, 0.86);
             }
 
             .eco-sidebar a,
@@ -232,7 +232,7 @@
             .eco-sidebar [data-current],
             .eco-sidebar .eco-sidebar__item,
             .eco-sidebar .eco-sidebar__item * {
-                color: #111827 !important;
+                color: #ffffff !important;
             }
 
             .dark .eco-sidebar a,
@@ -242,22 +242,30 @@
             .dark .eco-sidebar [data-current],
             .dark .eco-sidebar .eco-sidebar__item,
             .dark .eco-sidebar .eco-sidebar__item * {
-                color: #e5e7eb !important;
+                color: #ffffff !important;
             }
 
             .eco-sidebar [data-flux-sidebar-group-heading],
             .eco-sidebar [data-flux-sidebar-group-heading] *,
             .eco-sidebar flux\:sidebar\.group[heading],
-            .eco-sidebar flux\:sidebar\.group[heading] * {
-                color: #111827 !important;
+            .eco-sidebar flux\:sidebar\.group[heading] *,
+            .eco-sidebar [data-flux-sidebar-group] > .px-3.py-2 > .text-sm,
+            .eco-sidebar [data-flux-sidebar-group] > .px-3.py-2 > div {
+                color: #bff7c4 !important;
                 opacity: 1 !important;
+                font-size: 0.72rem !important;
+                font-weight: 800 !important;
+                letter-spacing: 0.08em !important;
+                text-transform: uppercase !important;
             }
 
             .dark .eco-sidebar [data-flux-sidebar-group-heading],
             .dark .eco-sidebar [data-flux-sidebar-group-heading] *,
             .dark .eco-sidebar flux\:sidebar\.group[heading],
-            .dark .eco-sidebar flux\:sidebar\.group[heading] * {
-                color: #a1a1aa !important;
+            .dark .eco-sidebar flux\:sidebar\.group[heading] *,
+            .dark .eco-sidebar [data-flux-sidebar-group] > .px-3.py-2 > .text-sm,
+            .dark .eco-sidebar [data-flux-sidebar-group] > .px-3.py-2 > div {
+                color: #bff7c4 !important;
             }
 
             .eco-sidebar svg,
@@ -270,7 +278,7 @@
             .eco-sidebar a:hover,
             .eco-sidebar button:hover,
             .eco-sidebar .eco-sidebar__item:hover {
-                background: transparent !important;
+                background: rgba(246, 255, 244, 0.26) !important;
             }
 
             .eco-sidebar a:hover,
@@ -280,7 +288,7 @@
             .eco-sidebar .eco-sidebar__item:hover,
             .eco-sidebar .eco-sidebar__item:hover svg,
             .eco-sidebar .eco-sidebar__item:hover [data-flux-icon] {
-                color: #059669 !important;
+                color: #ffffff !important;
             }
 
             .eco-sidebar a:active,
@@ -290,14 +298,14 @@
             .eco-sidebar .eco-sidebar__item:active,
             .eco-sidebar .eco-sidebar__item:active svg,
             .eco-sidebar .eco-sidebar__item:active [data-flux-icon] {
-                color: #059669 !important;
+                color: #ffffff !important;
             }
 
             .eco-sidebar [data-current],
             .eco-sidebar [aria-current="page"] {
-                background: #059669 !important;
+                background: #24582f !important;
                 border-radius: 0.35rem !important;
-                box-shadow: 0 10px 18px rgba(5, 150, 105, 0.18) !important;
+                box-shadow: 0 8px 16px rgba(36, 88, 47, 0.22) !important;
             }
 
             .eco-sidebar [data-current],
@@ -309,7 +317,7 @@
 
             .eco-sidebar [data-current]:hover,
             .eco-sidebar [aria-current="page"]:hover {
-                background: #047857 !important;
+                background: #1c4726 !important;
             }
 
             .eco-sidebar [data-current]:hover,
@@ -321,8 +329,8 @@
 
             .dark .eco-sidebar [data-current],
             .dark .eco-sidebar [aria-current="page"] {
-                background: #047857 !important;
-                box-shadow: 0 10px 18px rgba(4, 120, 87, 0.24) !important;
+                background: #24582f !important;
+                box-shadow: 0 8px 16px rgba(36, 88, 47, 0.22) !important;
             }
 
             .dark .eco-sidebar [data-current],
