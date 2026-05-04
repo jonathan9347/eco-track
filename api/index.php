@@ -31,6 +31,10 @@ putenv("APP_CONFIG_CACHE=$tempDir/framework/cache/config.php");
 putenv("APP_ROUTES_CACHE=$tempDir/framework/cache/routes.php");
 putenv("APP_EVENTS_CACHE=$tempDir/framework/cache/events.php");
 putenv("VIEW_COMPILED_PATH=$tempDir/framework/views");
+putenv('SESSION_DRIVER=cookie');
+putenv('SESSION_ENCRYPT=true');
+putenv('CACHE_STORE=array');
+putenv('QUEUE_CONNECTION=sync');
 
 // Load Composer autoloader
 $composerAutoload = __DIR__ . '/../vendor/autoload.php';
