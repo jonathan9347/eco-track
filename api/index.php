@@ -1,10 +1,27 @@
 <?php
 
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
 // Set up temporary directory
 $tempDir = '/tmp/laravel-' . uniqid();
 if (!is_dir($tempDir)) {
     mkdir($tempDir, 0755, true);
 }
+
+foreach ([
+    $tempDir.'/framework/cache',
+    $tempDir.'/framework/sessions',
+    $tempDir.'/framework/testing',
+    $tempDir.'/framework/views',
+] as $directory) {
+    if (! is_dir($directory)) {
+        mkdir($directory, 0755, true);
+    }
+}
+
 putenv("TMPDIR=$tempDir");
 putenv("TEMP=$tempDir");
 putenv("TMP=$tempDir");
@@ -20,21 +37,18 @@ if (!file_exists($composerAutoload)) {
 
 require $composerAutoload;
 
+// Determine if the application is in maintenance mode...
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
 // Create Laravel application
+/** @var Application $app */
 $app = require_once __DIR__ . '/../bootstrap/app.php';
 
-// Set the temp directory for views after app is created
+// Vercel's filesystem is read-only except for /tmp, so point Laravel storage there.
 if (method_exists($app, 'useStoragePath')) {
     $app->useStoragePath($tempDir);
 }
 
-// Set view compiled path
-$app['config']->set('view.compiled', $tempDir . '/views');
-
-// Handle the request
-$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-$response = $kernel->handle(
-    $request = Illuminate\Http\Request::capture()
-);
-$response->send();
-$kernel->terminate($request, $response);
+$app->handleRequest(Request::capture());
